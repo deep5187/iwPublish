@@ -66,6 +66,7 @@
         End If
         
         dtGrd.DataBind()
+        litPageHeader.Text="Articles"
         mvwMain.SetActiveView(vwGrid)
     End Sub
     Sub btnAdd_Click(ByVal s As Object, ByVal e As EventArgs)
@@ -79,11 +80,13 @@
         cbxlCats.ClearSelection()
         ViewState("idVal") = ""
         btnSubmit.Text = "Add"
+        litPageHeader.Text="Articles <small>Add</small>"
         mvwMain.SetActiveView(vwFrm)
     End Sub
     
     
     Sub btnCancel_Click(ByVal s As Object, ByVal e As EventArgs)
+        litPageHeader.Text="Articles"
         mvwMain.SetActiveView(vwGrid)
     End Sub
     
@@ -196,6 +199,7 @@
 
             ViewState("idVal") = idVal
             btnSubmit.Text = "Update"
+            litPageHeader.Text="Articles <small>Edit</small>"
             mvwMain.SetActiveView(vwFrm)
         End If
     End Sub
@@ -232,6 +236,9 @@
         });
               
     </script>
+</asp:Content>
+<asp:Content ID="PageHeader" ContentPlaceHolderID="cpHoldPageHeader" runat="server">
+    <asp:Literal ID="litPageHeader" runat="server">Articles</asp:Literal>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cpHoldMain" runat="Server">
     <asp:MultiView ID="mvwMain" runat="server">
