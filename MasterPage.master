@@ -1,0 +1,53 @@
+﻿<%@ Master Language="VB" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<script runat="server">
+    Sub page_load()
+        
+    End Sub
+    
+    Protected Sub btnLogout_Click(ByVal sender As Object, ByVal e As System.EventArgs)
+        Response.Clear()
+        FormsAuthentication.SignOut()
+        Response.Redirect("~/login.aspx")
+    End Sub
+</script>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1" runat="server">
+    <title>Deep Shah's Blog</title>
+    <link href="~/style/bootstrap.css" rel="stylesheet" type="text/css" />
+    <link href="~/style/StyleSheet.css" rel="Stylesheet" type="text/css" />
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div class="topbar">
+        <div class="fill">
+            <div class="container">
+                <a class="brand" href="#">CATapp Publishing</a>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="content">
+        <div class="page-header">
+                <h1>
+                     <asp:ContentPlaceHolder ID="cpHoldPageHeader" runat="server"></asp:ContentPlaceHolder>
+                     </h1>
+            </div>
+           
+            <div class="row">
+                <div class="span10">
+                    <asp:ContentPlaceHolder ID="cpHoldMain" runat="server">
+                    </asp:ContentPlaceHolder>
+                </div>
+            </div>
+        </div>
+        <footer>
+        <p>&copy; InformationWorks 2011</p>
+      </footer>
+    </div>
+    <!-- /container -->
+    </form>
+</body>
+</html>

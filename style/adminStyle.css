@@ -1,0 +1,218 @@
+﻿
+
+.panHead
+{
+      background: #f5f6f6; /* old browsers */
+
+background: -moz-linear-gradient(top, #f5f6f6 0%, #dbdce2 4%, #b8bac6 19%, #b8bac6 72%, #dddfe3 100%, #f5f6f6 100%); /* firefox */
+
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f5f6f6), color-stop(4%,#dbdce2), color-stop(19%,#b8bac6), color-stop(72%,#b8bac6), color-stop(100%,#dddfe3), color-stop(100%,#f5f6f6)); /* webkit */
+
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f5f6f6', endColorstr='#f5f6f6',GradientType=0 ); /* ie */
+}
+.panHead#addPanHead
+{
+    height:20px;
+    width:800px;
+}
+.panel
+{
+    background: #fcfff4; /* old browsers */
+
+background: -moz-linear-gradient(top, #fcfff4 0%, #e9e9ce 100%); /* firefox */
+
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fcfff4), color-stop(100%,#e9e9ce)); /* webkit */
+
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfff4', endColorstr='#e9e9ce',GradientType=0 ); /* ie */
+
+}
+
+.panel#addPan
+{
+    width:800px;
+}
+td
+{
+    padding:2px 12px 2px 2px;
+}
+
+tr
+{   
+    padding:2px 2px 15px 2px;
+}
+#addBut
+{
+    margin-top:10px;
+    margin-bottom:10px;
+    margin-left:100px;
+}
+
+
+#grdAdmin
+{
+    width:800px;
+}
+
+.grid
+{
+   background: #fcfff4; /* old browsers */
+
+background: -moz-linear-gradient(top, #fcfff4 0%, #e9e9ce 100%); /* firefox */
+
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fcfff4), color-stop(100%,#e9e9ce)); /* webkit */
+
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfff4', endColorstr='#e9e9ce',GradientType=0 ); /* ie */
+
+}
+.gridHead
+{
+  background: #f5f6f6; /* old browsers */
+
+background: -moz-linear-gradient(top, #f5f6f6 0%, #dbdce2 4%, #b8bac6 19%, #b8bac6 72%, #dddfe3 100%, #f5f6f6 100%); /* firefox */
+
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f5f6f6), color-stop(4%,#dbdce2), color-stop(19%,#b8bac6), color-stop(72%,#b8bac6), color-stop(100%,#dddfe3), color-stop(100%,#f5f6f6)); /* webkit */
+
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f5f6f6', endColorstr='#f5f6f6',GradientType=0 ); /* ie */
+
+}
+.editRow
+{
+    background: #f5f6f6; /* old browsers */
+
+background: -moz-linear-gradient(top, #f5f6f6 0%, #dbdce2 0%, #b8bac6 5%, #C7C9CC 96%, #f5f6f6 100%); /* firefox */
+
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f5f6f6), color-stop(0%,#dbdce2), color-stop(5%,#b8bac6), color-stop(96%,#C7C9CC), color-stop(100%,#f5f6f6)); /* webkit */
+
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f5f6f6', endColorstr='#f5f6f6',GradientType=0 ); /* ie */
+}
+.notify
+{
+    background: #b4e391; /* old browsers */
+
+background: -moz-linear-gradient(top, #b4e391 0%, #61c419 50%, #b4e391 100%); /* firefox */
+
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#b4e391), color-stop(50%,#61c419), color-stop(100%,#b4e391)); /* webkit */
+
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b4e391', endColorstr='#b4e391',GradientType=0 ); /* ie */
+} 
+
+#srchPanHead
+{
+    margin-top:5px;
+    width:323px;
+    height:25px;
+    clear:both;
+}
+#srchPanBody
+{
+
+    width:323px;
+    height:75px;
+    clear:both;
+    margin-bottom:5px;
+}
+
+#loginHead
+{
+    margin-top:5px;
+    width:323px;
+    height:25px;
+    clear:both;
+}
+
+#loginBody
+{
+	 width:323px;
+    height:75px;
+    clear:both;
+    margin-bottom:5px;
+}
+
+.error{
+color:Red;
+}
+
+#accordion 
+{
+    width:600px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+#tree
+{
+    float:left;
+    width:300px;
+    
+}
+
+
+#fileupload
+{
+    float:left;
+    width:360px;
+     margin: 0px 10px 0px 0px;
+}
+
+
+#listfile
+{
+       float:left;
+    width:350px;
+     margin: 0px 10px 0px 10px;
+}
+
+#treeview
+{
+    min-height:350px;
+}
+
+#files
+{
+    min-height:350px;
+}
+
+#uploads
+{
+    min-height:350px;
+}
+.file_input_textbox
+{
+	float: left;
+	 margin-top:2px;
+	
+}
+
+.file_input_div
+{
+	position: relative; 
+	width: 100px; 
+	height: 30px; 
+	overflow: hidden;
+}
+
+.file_input_button
+{
+	width: 100px; 
+	position: absolute; 
+	top: 0px;
+    
+}
+
+.file_input_hidden
+{
+	font-size: 45px; 
+	position: absolute; 
+	right: 0px; 
+	top: 0px; 
+	opacity: 0; 
+	filter: alpha(opacity=0); 
+	-ms-filter: "alpha(opacity=0)"; 
+	-khtml-opacity: 0; 
+	-moz-opacity: 0;
+}
+
+#ctl00_cpHoldMain_btnDelete
+{
+    margin-top:10px;
+}

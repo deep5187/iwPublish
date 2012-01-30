@@ -1,0 +1,93 @@
+﻿<%@ Master Language="VB" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<script runat="server">
+    Sub page_load()
+        If HttpContext.Current.User.Identity.IsAuthenticated Then
+            quicklink.Visible=True
+            If Not Page.IsPostBack Then
+                With ddlQuick
+                    .Items.Insert(0, New ListItem("Select...", ""))
+                    .Items.Insert(1, New ListItem("Admin", "Admin"))
+                    .Items.Insert(2, New ListItem("Articles", "Articles"))
+                    .Items.Insert(3, New ListItem("Categories", "Categories"))
+                    .Items.Insert(4, New ListItem("Categories With ExtJS", "CatExt"))
+                    .Items.Insert(5, New ListItem("Images", "Images"))
+                End With
+            End If
+        Else
+            quicklink.Visible=False
+        End If
+        
+    End Sub
+    
+    
+    Protected Sub ddlQuick_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs)
+        Select Case ddlQuick.SelectedValue
+            Case "Admin"
+                Response.Redirect("../admin/admin.aspx")
+            Case "Articles"
+                Response.Redirect("../admin/admin_articles.aspx")
+            Case "Categories"
+                Response.Redirect("../admin/admin_categories.aspx")
+            Case "CatExt"
+                Response.Redirect("../admin/admin_catext.aspx")
+            Case "Images"
+                Response.Redirect("../admin/admin_images.aspx")
+        End Select
+    End Sub
+
+    Protected Sub btnLogout_Click(ByVal sender As Object, ByVal e As System.EventArgs)
+        Response.Clear()
+        FormsAuthentication.SignOut()
+        Response.Redirect("~/login.aspx")
+    End Sub
+</script>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1" runat="server">
+    <title>Deep Shah's Blog</title>
+    <link href="~/style/bootstrap.css" rel="stylesheet" type="text/css" />
+   <link href="~/style/StyleSheet.css" rel="Stylesheet" type="text/css" />
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div class="topbar">
+        <div class="fill">
+            <div class="container">
+                <a class="brand" href="#">CATapp Publishing</a>
+                <ul class="nav">
+                </ul>
+                <ul id="quicklink" runat="server">
+                    <li>Quick Links :
+                        <asp:DropDownList ID="ddlQuick" runat="server" OnSelectedIndexChanged="ddlQuick_SelectedIndexChanged"
+                            AutoPostBack="true">
+                        </asp:DropDownList>
+                    </li>
+                    <li id="logout">
+                        <asp:LinkButton ID="btnLogout" runat="server" Text="Logout" OnClick="btnLogout_Click"></asp:LinkButton>
+                    </li>
+                </ul>
+               
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="content">
+            <div class="page-header">
+                <h1>
+                    <%--Page name <small>Supporting text or tagline</small>--%></h1>
+            </div>
+            <div class="row">
+                    <asp:ContentPlaceHolder ID="cpHoldMain" runat="server">
+                    </asp:ContentPlaceHolder>
+            </div>
+        </div>
+        <footer>
+        <p>&copy; InformationWorks 2011</p>
+      </footer>
+    </div>
+    <!-- /container -->
+    </form>
+</body>
+</html>
