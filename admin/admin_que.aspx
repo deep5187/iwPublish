@@ -10,8 +10,14 @@
 
     Sub page_load()
         If Not Page.IsPostBack Then
-           FillOptionsGrid()
-            
+           showlist()
+            With ddlAdmin
+                .DataSource = IST.DataAccess.GetDataTable("SELECT admin_id, admin_fname +'  '+admin_lname as adminame, admin_username, admin_password, admin_email, admin_last_login FROM administrator")
+                .DataValueField = "admin_id"
+                .DataTextField = "adminame"
+                .DataBind()
+                .Items.Insert(0, New ListItem("Select...", ""))
+            End With
         End If
         conn.ConnectionString = ConfigurationManager.ConnectionStrings("db").ConnectionString
     End Sub
@@ -20,13 +26,13 @@
         conn.ConnectionString = ConfigurationManager.ConnectionStrings("db").ConnectionString
         Dim adminSql As String
         If ViewState("sortField") = String.Empty Then
-            ViewState("sortField") = "pst_date"
+            ViewState("sortField") = "q_date"
             ViewState("sortOrder") = "DESC"
         End If
-        adminSql = " SELECT pst_id, pst_title, pst_summary, pst_text, pst_allow_comments, CONVERT(varchar,pst_date,101) as pst_date, pst_hidden, admin_id" & _
-                                 " FROM posting "
-        If txtSrchTitle.Text <> String.Empty Then
-            adminSql &= " WHERE pst_title LIKE '%" & txtSrchTitle.Text.Replace("'", "''") & "%'"
+        adminSql = " SELECT q_id, q_name, q_text, q_solution, CONVERT(varchar,q_date,101) as q_date, q_hidden, admin_id" & _
+                                 " FROM question "
+        If txtSrchName.Text <> String.Empty Then
+            adminSql &= " WHERE q_name LIKE '%" & txtSrchName.Text.Replace("'", "''") & "%'"
         End If
    
         adminSql &= "ORDER BY " & ViewState("sortField") & " " & ViewState("sortOrder")
@@ -41,30 +47,127 @@
         End If
         
         dtGrd.DataBind()
-        litPageHeader.Text="Articles"
+        litPageHeader.Text="Questions"
         mvwMain.SetActiveView(vwGrid)
     End Sub
 
     
     Sub btnAdd_Click(ByVal s As Object, ByVal e As EventArgs)
-       
+        txtQueName.Text = ""
+        txtQueText.Text = ""
+        txtDate.Text = DateTime.Today
+        cbxHidden.Checked = False
+        ddlAdmin.ClearSelection()
+        cbxlCats.ClearSelection()
+        ViewState("idVal") = ""
+        btnSubmit.Text = "Add and Continue"
+        litPageHeader.Text="Questions <small>Add</small>"
+        mvwMain.SetActiveView(vwFrm)
     End Sub
     
     
     Sub btnCancel_Click(ByVal s As Object, ByVal e As EventArgs)
-        
+        litPageHeader.Text="Questions"
+        mvwMain.SetActiveView(vwGrid)
     End Sub
     
     Sub btnSubmit_Click(ByVal s As Object, ByVal e As EventArgs)
+    Dim flag As Char = "n"
+        If Page.IsValid Then
+            Dim sql As String
+            If Len(ViewState("idVal")) = 0 Then
+                sql = "INSERT INTO question(q_name, q_text, q_date, q_hidden, admin_id) VALUES" & _
+                              "(@q_name, @q_text, @q_date, @q_hidden, @admin_id); SELECT @@IDENTITY;"
+                flag = "i"
+            Else
+                sql = "UPDATE question SET q_name=@q_name, q_text=@q_text," & _
+                      "q_date=@q_date, q_hidden=@q_hidden, admin_id=@admin_id WHERE q_id = " & ViewState("idVal")
+                flag = "u"
+            End If
+            Dim cmdSql As New SqlCommand(sql, conn)
+            cmdSql.Parameters.AddWithValue("@q_name", txtQueName.Text)
+            
+            cmdSql.Parameters.AddWithValue("@q_text", txtQueText.Text)
+            cmdSql.Parameters.AddWithValue("@q_date", txtDate.Text)
+     
+            If cbxHidden.Checked Then
+                cmdSql.Parameters.AddWithValue("@q_hidden", 1)
+            Else
+                cmdSql.Parameters.AddWithValue("@q_hidden", 0)
+            End If
+            cmdSql.Parameters.AddWithValue("@admin_id", ddlAdmin.SelectedItem.Value)
+            conn.Open()
 
+            If Len(ViewState("idVal")) = 0 Then
+                ViewState("idVal") = cmdSql.ExecuteScalar
+            Else
+                cmdSql.ExecuteNonQuery()
+            End If
+            
+
+            'Dim tmpItem As ListItem
+            'cmdSql = New SqlCommand("DELETE FROM posting_category WHERE pst_id = " & ViewState("idVal"), conn)
+            'cmdSql.ExecuteNonQuery()
+            'For Each tmpItem In cbxlCats.Items
+            '    If tmpItem.Selected Then
+            '        cmdSql = New SqlCommand("INSERT INTO posting_category (pst_id, cat_id) VALUES (" & ViewState("idVal") & ", " & CInt(tmpItem.Value) & ")", conn)
+            '        cmdSql.ExecuteNonQuery()
+            '    End If
+            'Next
         
+            conn.Close()
+            
+            FillOptionsGrid()
+        End If
     End Sub
     
     Sub dgrdList_Command(ByVal s As Object, ByVal e As DataGridCommandEventArgs)
-       
+       Select Case e.CommandName
+            Case "delete"
+                Dim idVal As Integer = dtGrd.DataKeys(e.Item.ItemIndex)
+                Dim sql As String = "DELETE FROM [option] WHERE q_id = " & idVal
+                
+                conn.Open()
+                Dim cmdSql As SqlCommand
+                cmdSql = New SqlCommand("DELETE FROM [option] WHERE q_id = " & idVal, conn)
+                cmdSql.ExecuteNonQuery()
+                cmdSql = New SqlCommand("DELETE FROM question WHERE q_id = " & idVal, conn)
+                cmdSql.ExecuteNonQuery()
+                conn.Close()
+                showlist()
+            Case "edit"
+                Dim idVal As Integer = dtGrd.DataKeys(e.Item.ItemIndex)
+                EditForm(idVal)
+        End Select
     End Sub
     Sub EditForm(ByVal idVal As Integer)
-       
+       Dim sql As String = "SELECT q_id, q_name, q_text, q_solution, CONVERT(varchar,q_date,101) as q_date, q_hidden, admin_id FROM question WHERE q_id = " & idVal
+       Dim dtb As DataTable = IST.DataAccess.GetDataTable(sql)
+        
+        If dtb.Rows.Count > 0 Then
+            Dim dr As DataRow = dtb.Rows(0)
+            
+            txtQueName.Text = dr("q_name").ToString
+            txtQueText.Text = dr("q_text").ToString
+            txtDate.Text = dr("q_date").ToString
+            If Not Convert.IsDBNull(dr("q_hidden"))
+                cbxHidden.Checked = dr("q_hidden")
+            Else
+                cbxHidden.Checked = false
+            End If
+            
+            ddlAdmin.SelectedValue = dr("admin_id")
+            cbxlCats.ClearSelection()
+            'dtb = IST.DataAccess.GetDataTable("SELECT * FROM posting_category WHERE pst_id = " & idVal)
+            'For Each dr In dtb.Rows
+            '    cbxlCats.Items.FindByValue(dr("cat_id")).Selected = True
+            'Next
+
+            ViewState("idVal") = idVal
+            btnSubmit.Text = "Update and Continue"
+            litPageHeader.Text="Questions <small>Edit</small>"
+            mvwMain.SetActiveView(vwFrm)
+        End If
     End Sub
     Sub dtGrd_Paging(ByVal s As Object, ByVal e As DataGridPageChangedEventArgs)
        
@@ -76,18 +179,19 @@
     Sub btnSearch_Click(ByVal s As Object, ByVal e As EventArgs)
         
     End Sub
-    
-    Sub btnAddOption_Click(ByVal s As Object, ByVal e As EventArgs)
+    Sub btnFinish_Click(ByVal s As Object, ByVal e As EventArgs)
+        showlist()
     End Sub
     
     Sub FillOptionsGrid()
+        Dim idVal As Integer = CType(ViewState("idVal"),Integer)
         conn.ConnectionString = ConfigurationManager.ConnectionStrings("db").ConnectionString
         Dim optionSql As String
         If ViewState("sortField") = String.Empty Then
-            ViewState("sortField") = "pst_date"
+            ViewState("sortField") = "q_date"
             ViewState("sortOrder") = "DESC"
         End If
-        optionSql = " SELECT opt_id,opt_text,q_id as opt_id,opt_text,q_id from [option]"
+        optionSql = " SELECT opt_id,opt_text,q_id as opt_id,opt_text,q_id from [option] WHERE q_id=" & idVal
         
         Dim dt As DataTable  = IST.DataAccess.GetDataTable(optionSql)
         If dt.Rows.Count>0 then
@@ -150,14 +254,15 @@
         FillOptionsGrid()
     End Sub
     Sub grdOptions_RowCommand(sender As object ,e As GridViewCommandEventArgs)
+        Dim IdVal As Integer = CType(ViewState("idVal"),Integer)
         Dim sql As String
         If e.CommandName.Equals("Insert")
             sql = "INSERT INTO [option](opt_text,q_id) VALUES (@opt_text,@q_id)"
             Dim cmdSql As New SqlCommand(sql, conn)
             cmdSql.Parameters.AddWithValue("@opt_text", CType(grdOptions.FooterRow.FindControl("txtNewOption"),TextBox).Text)
-            cmdSql.Parameters.AddWithValue("@q_id", 1)
+            cmdSql.Parameters.AddWithValue("@q_id", IdVal)
             conn.Open()
-            ViewState("idOptVal") = cmdSql.ExecuteScalar
+            ViewState("idOptVal") = cmdSql.ExecuteScalar()
             conn.Close()
             FillOptionsGrid()
         End If
@@ -196,7 +301,7 @@
                     CssClass="btn" />
             </div>
             <br />
-            <asp:DataGrid ID="dtGrd" runat="server" AutoGenerateColumns="false" DataKeyField="pst_id"
+            <asp:DataGrid ID="dtGrd" runat="server" AutoGenerateColumns="false" DataKeyField="q_id"
                 OnItemCommand="dgrdList_Command" AllowPaging="true" OnPageIndexChanged="dtGrd_Paging"
                 PageSize="3" PagerStyle-Mode="NumericPages" AllowSorting="true" OnSortCommand="dtGrd_SortChange"
                 CssClass="bordered-table" HeaderStyle-CssClass="gridHead">
@@ -227,10 +332,10 @@
 
                 </div>
                 <div class="clearfix">
-                    <label for="txtQuestion">
+                    <label for="txtQueText">
                         Question Text</label>
                     <div class="input">
-                        <asp:TextBox ID="txtQuestion" runat="server" TextMode="MultiLine" Height="200" Width="500" ClientIDMode="Static"></asp:TextBox><asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="txtQuestion"
+                        <asp:TextBox ID="txtQueText" runat="server" TextMode="MultiLine" Height="200" Width="500" ClientIDMode="Static"></asp:TextBox><asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="txtQueText"
                         ID="reqtxtTitle" runat="server"></asp:RequiredFieldValidator>
                     </div>
                 </div>
@@ -244,7 +349,12 @@
                         ErrorMessage="Invalid Date" ValidationExpression="^\d{1,2}\/\d{1,2}\/\d{4}$"></asp:RegularExpressionValidator>
                     </div>
                 </div>
-
+                <div class="clearfix">
+                    <label for="cbxHidden">Hidden</label>
+                    <div class="input">
+                     <asp:CheckBox ID="cbxHidden" runat="server" />
+                    </div>
+                </div>
                 <div class="clearfix">
                     <label for="ddlAdmin">Admin</label>
                     <div class="input">
@@ -271,16 +381,12 @@
             </form>
         </asp:View>
         <asp:View ID="vwFrmOptions" runat="server">
-            <div>
-                <table>
-                    <tr>
-                        <td>
-                            <asp:GridView ID="grdOptions" runat="server" AutoGenerateColumns="False" DataKeyNames="opt_id"
-                                OnRowCancelingEdit="grdOptions_RowCancelingEdit" OnRowDataBound="grdOptions_RowDataBound"
-                                OnRowEditing="grdOptions_RowEditing" OnRowUpdating="grdOptions_RowUpdating" OnRowCommand="grdOptions_RowCommand"
-                                ShowFooter="True" OnRowDeleting="grdOptions_RowDeleting">
-                                <Columns>
-                                    <%--<asp:TemplateField HeaderText="ID" HeaderStyle-HorizontalAlign="Left">
+            <asp:GridView ID="grdOptions" runat="server" AutoGenerateColumns="False" DataKeyNames="opt_id"
+                OnRowCancelingEdit="grdOptions_RowCancelingEdit" OnRowDataBound="grdOptions_RowDataBound"
+                OnRowEditing="grdOptions_RowEditing" OnRowUpdating="grdOptions_RowUpdating" OnRowCommand="grdOptions_RowCommand"
+                ShowFooter="True" OnRowDeleting="grdOptions_RowDeleting">
+                <Columns>
+                    <%--<asp:TemplateField HeaderText="ID" HeaderStyle-HorizontalAlign="Left">
                                         <EditItemTemplate>
                                             <asp:Label ID="lblId" runat="server" Text='<%# Bind("opt_id") %>'></asp:Label>
                                         </EditItemTemplate>
@@ -288,40 +394,39 @@
                                             <asp:Label ID="lblId" runat="server" Text='<%# Bind("opt_id") %>'></asp:Label>
                                         </ItemTemplate>
                                     </asp:TemplateField>--%>
-                                    <asp:TemplateField HeaderText="Option Text" HeaderStyle-HorizontalAlign="Left">
-                                        <EditItemTemplate>
-                                            <asp:TextBox ID="txtOptText" runat="server" Text='<%# Bind("opt_text") %>'></asp:TextBox>
-                                        </EditItemTemplate>
-                                        <FooterTemplate>
-                                            <asp:TextBox ID="txtNewOption" runat="server"></asp:TextBox>
-                                        </FooterTemplate>
-                                        <ItemTemplate>
-                                            <asp:Label ID="lblOptionText" runat="server" Text='<%# Bind("opt_text") %>'></asp:Label>
-                                        </ItemTemplate>
-                                    </asp:TemplateField>
-                                    <asp:TemplateField HeaderText="Edit" ShowHeader="False" HeaderStyle-HorizontalAlign="Left">
-                                        <EditItemTemplate>
-                                            <asp:LinkButton ID="lbkUpdate" runat="server" CausesValidation="True" CommandName="Update"
-                                                Text="Update"></asp:LinkButton>
-                                            <asp:LinkButton ID="lnkCancel" runat="server" CausesValidation="False" CommandName="Cancel"
-                                                Text="Cancel"></asp:LinkButton>
-                                        </EditItemTemplate>
-                                        <FooterTemplate>
-                                            <asp:LinkButton ID="lnkAdd" runat="server" CausesValidation="False" CommandName="Insert"
-                                                Text="Insert"></asp:LinkButton>
-                                        </FooterTemplate>
-                                        <ItemTemplate>
-                                            <asp:LinkButton ID="lnkEdit" runat="server" CausesValidation="False" CommandName="Edit"
-                                                Text="Edit"></asp:LinkButton>
-                                        </ItemTemplate>
-                                    </asp:TemplateField>
-                                    <asp:CommandField HeaderText="Delete" ShowDeleteButton="True" ShowHeader="True" />
-                                </Columns>
-                            </asp:GridView>
-                        </td>
-                    </tr>
-                </table>
-            </div>
+                    <asp:TemplateField HeaderText="Option Text" HeaderStyle-HorizontalAlign="Left">
+                        <EditItemTemplate>
+                            <asp:TextBox ID="txtOptText" runat="server" Text='<%# Bind("opt_text") %>'></asp:TextBox>
+                        </EditItemTemplate>
+                        <FooterTemplate>
+                            <asp:TextBox ID="txtNewOption" runat="server"></asp:TextBox>
+                        </FooterTemplate>
+                        <ItemTemplate>
+                            <asp:Label ID="lblOptionText" runat="server" Text='<%# Bind("opt_text") %>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Edit" ShowHeader="False" HeaderStyle-HorizontalAlign="Left">
+                        <EditItemTemplate>
+                            <asp:LinkButton ID="lbkUpdate" runat="server" CausesValidation="True" CommandName="Update"
+                                Text="Update"></asp:LinkButton>
+                            <asp:LinkButton ID="lnkCancel" runat="server" CausesValidation="False" CommandName="Cancel"
+                                Text="Cancel"></asp:LinkButton>
+                        </EditItemTemplate>
+                        <FooterTemplate>
+                            <asp:LinkButton ID="lnkAdd" runat="server" CausesValidation="False" CommandName="Insert"
+                                Text="Insert"></asp:LinkButton>
+                        </FooterTemplate>
+                        <ItemTemplate>
+                            <asp:LinkButton ID="lnkEdit" runat="server" CausesValidation="False" CommandName="Edit"
+                                Text="Edit"></asp:LinkButton>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:CommandField HeaderText="Delete" ShowDeleteButton="True" ShowHeader="True" />
+                </Columns>
+            </asp:GridView>
+            <div class="actions">
+            <asp:Button ID="btnFinish" Text="Finish" OnClick="btnFinish_Click" runat="server" CssClass="btn primary" />
+            </div>     
         </asp:View>
     </asp:MultiView>
 </asp:Content>
