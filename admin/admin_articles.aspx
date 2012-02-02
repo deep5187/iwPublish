@@ -33,7 +33,7 @@
                 .Items.Insert(0, New ListItem("Select...", ""))
             End With
             With cbxlCats
-                .DataSource = IST.DataAccess.GetDataTable("SELECT cat_id, cat_name, cat_rank FROM category ORDER BY cat_rank")
+                .DataSource = IST.DataAccess.GetDataTable("SELECT cat_id, cat_name FROM category WHERE cat_type = 'News'")
                 .DataValueField = "cat_id"
                 .DataTextField = "cat_name"
                 .DataBind()
@@ -143,13 +143,6 @@
             Next
         
             conn.Close()
-            
-            'Twitter Publishing
-            'If (Not cbxHidden.Checked) And flag = "i" Then
-            '    Dim tw1 As New TwitterVB2.TwitterAPI
-            '    tw1.AuthenticateWith(ConfigurationManager.AppSettings("ConsumerKey"), ConfigurationManager.AppSettings("ConsumerKeySecret"), oauthToken, oauthSecret)
-            '    tw1.Update("""" & txtTitle.Text & ":" & txtSummary.Text & """ " & "http://ist-s-students.syr.edu/deshah6791/Default.aspx?id=" & ViewState("idVal"))
-            'End If
             showlist()
         End If
         

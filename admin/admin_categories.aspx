@@ -12,7 +12,7 @@
     End Sub
     
     Private Sub ShowCatList()
-        Dim sql As String = "SELECT cat_id,cat_name,cat_rank FROM category"
+        Dim sql As String = "SELECT cat_id,cat_name,cat_type FROM category"
         dtGrd.DataSource = IST.DataAccess.GetDataTable(sql)
         dtGrd.DataBind()
         mvwMain.SetActiveView(vmList)
@@ -36,11 +36,14 @@
     End Sub
 
     Sub EditForm(ByVal id As Integer)
-        Dim dtb As DataTable = IST.DataAccess.GetDataTable("SELECT cat_name,cat_rank FROM category WHERE cat_id=" & id)
+        Dim dtb As DataTable = IST.DataAccess.GetDataTable("SELECT cat_name,cat_type FROM category WHERE cat_id=" & id)
         If dtb.Rows.Count > 0 Then
             Dim dr As DataRow = dtb.Rows(0)
             catNameTxt.Text = dr("cat_name")
-            catRankTxt.Text = dr("cat_rank").ToString
+            If Not Convert.IsDBNull(dr("cat_type"))
+                lstCatType.SelectedValue = dr("cat_type")
+            End If
+            
             ViewState("id") = id
             subBtn.Text="Update"
             mvwMain.SetActiveView(vmForm)
@@ -53,7 +56,6 @@
     
     Protected Sub addBtn_Click(ByVal sender As Object, ByVal e As System.EventArgs)
         catNameTxt.Text = ""
-        catRankTxt.Text = ""
         ViewState("id") = ""
         subBtn.Text = "Add New"
         mvwMain.SetActiveView(vmForm)
@@ -63,17 +65,13 @@
         Dim sql As String
         If Page.IsValid Then
             If Len(ViewState("id")) = 0 Then
-                sql = "INSERT INTO category (cat_name,cat_rank) VALUES (@cat_name,@cat_rank)"
+                sql = "INSERT INTO category (cat_name,cat_type) VALUES (@cat_name,@cat_type)"
             Else
-                sql = "UPDATE category SET cat_name=@cat_name,cat_rank=@cat_rank WHERE cat_id=" & ViewState("id")
+                sql = "UPDATE category SET cat_name=@cat_name, cat_type=@cat_type WHERE cat_id=" & ViewState("id")
             End If
             Dim sqlcmd As New SqlCommand(sql, conn)
             sqlcmd.Parameters.AddWithValue("@cat_name", catNameTxt.Text)
-            If catRankTxt.Text = "" Then
-                sqlcmd.Parameters.AddWithValue("@cat_rank", DBNull.Value)
-            Else
-                sqlcmd.Parameters.AddWithValue("@cat_rank", catRankTxt.Text)
-            End If
+            sqlcmd.Parameters.AddWithValue("@cat_type",lstCatType.SelectedValue)
             conn.Open()
             sqlcmd.ExecuteNonQuery()
             conn.Close()
@@ -93,7 +91,7 @@
             <asp:DataGrid ID="dtGrd" runat="server" AutoGenerateColumns="false" DataKeyField="cat_id" OnItemCommand="dtGrid_ItemCmd" CssClass="grid"  HeaderStyle-CssClass="gridHead">
                 <Columns>
                     <asp:BoundColumn DataField="cat_name" HeaderText="Category"></asp:BoundColumn>
-                    <asp:BoundColumn DataField="cat_rank" HeaderText="Rank"></asp:BoundColumn>
+                    <asp:BoundColumn DataField="cat_type" HeaderText="Type"></asp:BoundColumn>
                     <asp:TemplateColumn>
                         <ItemTemplate>
                             <asp:Button Text="Edit" CommandName="Edit" runat="server"  CssClass="buttonSmall"/>
@@ -111,14 +109,20 @@
            <div class="grid">
             <table>
                 <tr>
+                    <td>
+                        Type
+                    </td>
+                    <td>
+                        <asp:DropDownList ID="lstCatType" runat="server">
+                            <asp:ListItem Value="News" Text="News"></asp:ListItem>
+                            <asp:ListItem Value="Question" Text="Question"></asp:ListItem>
+                        </asp:DropDownList>
+                    </td>
+                </tr>
+                <tr>
                     <td>Category</td>
                     <td><asp:TextBox ID="catNameTxt" runat="server"></asp:TextBox></td>
                     <td><asp:RequiredFieldValidator ControlToValidate="catNameTxt" ErrorMessage="Required" runat="server"></asp:RequiredFieldValidator> </td>
-                </tr>
-                <tr>
-                    <td>Rank</td>
-                    <td><asp:TextBox ID="catRankTxt" runat="server"></asp:TextBox></td>
-                    <td><asp:RegularExpressionValidator ControlToValidate="catRankTxt" ErrorMessage="Number Only" runat="server" ValidationExpression="^\d+$"></asp:RegularExpressionValidator></td>
                 </tr>
                 <tr>
                     <td><asp:Button ID="subBtn" runat="server" Text="Submit" onclick="subBtn_Click" CssClass="buttonBig"/></td>

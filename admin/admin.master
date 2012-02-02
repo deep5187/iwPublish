@@ -9,8 +9,8 @@
                     .Items.Insert(0, New ListItem("Select...", ""))
                     .Items.Insert(1, New ListItem("Admin", "Admin"))
                     .Items.Insert(2, New ListItem("Articles", "Articles"))
-                    .Items.Insert(3, New ListItem("Categories", "Categories"))
-                    .Items.Insert(4, New ListItem("Categories With ExtJS", "CatExt"))
+                    .Items.Insert(3, New ListItem("Questions","Questions"))
+                    .Items.Insert(4, New ListItem("Categories", "Categories"))
                     .Items.Insert(5, New ListItem("Images", "Images"))
                 End With
             End If
@@ -27,10 +27,10 @@
                 Response.Redirect("../admin/admin.aspx")
             Case "Articles"
                 Response.Redirect("../admin/admin_articles.aspx")
+            Case "Questions"
+                Response.Redirect("../admin/admin_que.aspx")
             Case "Categories"
                 Response.Redirect("../admin/admin_categories.aspx")
-            Case "CatExt"
-                Response.Redirect("../admin/admin_catext.aspx")
             Case "Images"
                 Response.Redirect("../admin/admin_images.aspx")
         End Select
@@ -45,20 +45,20 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head id="Head1" runat="server">
     <title>Deep Shah's Blog</title>
-    <link href="~/style/bootstrap.css" rel="stylesheet" type="text/css" />
+    <link href="~/style/bootstrap.min.css" rel="stylesheet" type="text/css" />
    <link href="~/style/StyleSheet.css" rel="Stylesheet" type="text/css" />
+   <link href="~/style/adminStyle.css" rel="Stylesheet" type="text/css" />
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
 </head>
 <body>
     <form id="form1" runat="server">
-    <div class="topbar">
-        <div class="fill">
+    <ajaxToolkit:ToolkitScriptManager runat="Server" />
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
             <div class="container">
                 <a class="brand" href="#">CATapp Publishing</a>
-                <ul class="nav">
-                </ul>
-                <ul id="quicklink" runat="server">
+                <ul id="quicklink" runat="server" class="nav">
                     <li>Quick Links :
                         <asp:DropDownList ID="ddlQuick" runat="server" OnSelectedIndexChanged="ddlQuick_SelectedIndexChanged"
                             AutoPostBack="true">
@@ -80,13 +80,19 @@
                      </h1>
             </div>
             <div class="row">
-                    <asp:ContentPlaceHolder ID="cpHoldMain" runat="server">
+            <div class="span2">
+            
+            </div>
+            <div class="span10">
+            <asp:ContentPlaceHolder ID="cpHoldMain" runat="server">
                     </asp:ContentPlaceHolder>
+            </div>
+                    
             </div>
         </div>
         <footer>
         <p>&copy; InformationWorks 2011</p>
-      </footer>
+        </footer>
     </div>
     <!-- /container -->
     </form>

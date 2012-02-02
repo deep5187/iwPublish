@@ -36,12 +36,25 @@
         min-height: 500px;
         padding-left:10px;
       }
-      .topbar .btn {
-        border: 0;
-      }
 
 #loginFrm {
     border-style:solid;
-border-width:1px;
+    border-width:1px;
     border-color: #F7F7F7;
-}  
+}
+
+.checkBoxLst tbody tr
+{
+    padding: 5px 0px 5px 0px;
+}
+
+.checkBoxLst tbody tr td input {
+    padding-left:5px;
+    padding-top: 5px;
+    float:left;
+}
+
+.checkBoxLst tbody tr td label {
+    padding-left:10px;
+    float:left;
+}
