@@ -11,7 +11,6 @@
     Shared cntDateClick As Integer
     Dim optionsTxtBox    As List(Of TextBox) = New List(Of TextBox)
     Private Const VirtualFileRoot As String = "~/files/images/"
-
     Sub page_load()
         If Not Page.IsPostBack Then
            showlist()
@@ -174,7 +173,7 @@
                 cbxHidden.Checked = false
             End If
             If Not Convert.IsDBNull(dr("q_diagram"))
-                imgDiagram.ImageUrl = Server.MapPath(VirtualFileRoot & "/") & dr("q_diagram").ToString
+                imgDiagram.ImageUrl = "/iwPublish/files/images/ " & dr("q_diagram").ToString
             Else
                 imgDiagram.ImageUrl = Server.MapPath("~/images/noimage.png")
             End If
@@ -310,13 +309,6 @@
         $(function () {
             $("input[id$=txtDate]").datepicker();
         });
-       
-        function imgUpload_onchange(oFileUpload1) 
-        {
-            console.log('this works' + oFileUpload1.value);
-            document.getElementById('imgDiagram').src = "http://localhost:2001/iwPublish/images/noimage.png"; 
-        }         
-        
     </script>
 </asp:Content>
 <asp:Content ID="PageHeader" ContentPlaceHolderID="cpHoldPageHeader" runat="server">
