@@ -40,26 +40,26 @@ Login
 <div class="error">
 <asp:Literal ID="litError" runat="server" ></asp:Literal>
 </div>
-<div id="loginFrm">
-<form>
+<div id="loginFrm" >
+<div class="form-horizontal" style="padding-top:15px;">
         <fieldset>
-          <div class="clearfix">
+          <div class="control-group">
             <label for="txtUname"> Username</label>
-            <div class="input">
+            <div class="controls">
               <asp:TextBox ID="txtUname" runat="server" ClientIDMode="Static"></asp:TextBox>
             </div>
-          </div><!-- /clearfix -->
-          <div class="clearfix">
+          </div>
+          <div class="control-group">
             <label for="txtPass">Password</label>
-            <div class="input">
+            <div class="controls">
               <asp:TextBox ID="txtPass" runat="server" TextMode="Password" ClientIDMode="Static"></asp:TextBox>
             </div>
           </div>
-          <div class="actions">
-                <asp:Button id="btnLogin" runat="server" OnClick="btnLogin_Click" Text="Login" cssClass="btn primary"/>
+          <div class="form-actions">
+                <asp:Button id="btnLogin" runat="server" OnClick="btnLogin_Click" Text="Login" cssClass="btn btn-primary"/>
           </div>
           </fieldset>
-</form>
+  </div>
 </div>
 </asp:Content>
 

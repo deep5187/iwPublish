@@ -30,7 +30,7 @@
             wrt.WriteStartElement("item")
             wrt.WriteElementString("title", dr("pst_title"))
             wrt.WriteElementString("link", "http://deep-shah.com/default.aspx?id=" & dr("pst_id"))
-            wrt.WriteElementString("description", dr("pst_summary"))
+            wrt.WriteElementString("description", dr("pst_text"))
             wrt.WriteElementString("guid", "http://deep-shah.com/default.aspx?id=" & dr("pst_id"))
             wrt.WriteElementString("pubDate", CType(dr("pst_date"),DateTime).ToString("r"))
             Dim sqlCat As String = "SELECT cat_name FROM posting_category pc JOIN category c ON  pc.cat_id = c.cat_id WHERE pst_id = " & dr("pst_id")

@@ -1,5 +1,5 @@
 ﻿<%@ Page Title="" Language="VB" MasterPageFile="admin.master" %>
-
+<%@ Register TagPrefix="asp" Namespace="AjaxControlToolkit" Assembly="AjaxControlToolkit"%>
 <%@ Import Namespace="System.Data" %>
 <%@ Import Namespace="System.Data.SqlClient" %>
 <%@ Import Namespace="TwitterVB2" %>
@@ -10,8 +10,6 @@
     'Public oauthToken As String = "226367135-xy3HNxXWrN7uLxJHUPkqs1rfiCRGg7GHxw62nLwG"
     'Public oauthSecret As String = "RY8Tlb5hPWj8qrGqNVSQNHDyNIoROvtCkbkqOPb0lI0"
     Sub page_load()
-
-        Dim tw As New TwitterAPI
         
         'If Request("oauth_token") Is Nothing Then
         '    '' Send the browser to Twitter, and send the URl of the page to come back to after authentication
@@ -25,13 +23,6 @@
         conn.ConnectionString = ConfigurationManager.ConnectionStrings("db").ConnectionString
         If Not Page.IsPostBack Then
             showlist()
-            With ddlAdmin
-                .DataSource = IST.DataAccess.GetDataTable("SELECT admin_id, admin_fname +'  '+admin_lname as adminame, admin_username, admin_password, admin_email, admin_last_login FROM administrator")
-                .DataValueField = "admin_id"
-                .DataTextField = "adminame"
-                .DataBind()
-                .Items.Insert(0, New ListItem("Select...", ""))
-            End With
             With cbxlCats
                 .DataSource = IST.DataAccess.GetDataTable("SELECT cat_id, cat_name FROM category WHERE cat_type = 'News'")
                 .DataValueField = "cat_id"
@@ -71,12 +62,10 @@
     End Sub
     Sub btnAdd_Click(ByVal s As Object, ByVal e As EventArgs)
         txtTitle.Text = ""
-        txtSummary.Text = ""
         txtText.Text = ""
         txtDate.Text = DateTime.Today
-        cbxAllow.Checked = True
         cbxHidden.Checked = False
-        ddlAdmin.ClearSelection()
+        lblAdmin.Text = HttpContext.Current.User.Identity.Name
         cbxlCats.ClearSelection()
         ViewState("idVal") = ""
         btnSubmit.Text = "Add"
@@ -105,24 +94,17 @@
             End If
             Dim cmdSql As New SqlCommand(sql, conn)
             cmdSql.Parameters.AddWithValue("@pst_title", txtTitle.Text)
-            If txtSummary.Text = "" Then
-                cmdSql.Parameters.AddWithValue("@pst_summary", DBNull.Value)
-            Else
-                cmdSql.Parameters.AddWithValue("@pst_summary", txtSummary.Text)
-            End If
+            cmdSql.Parameters.AddWithValue("@pst_summary", DBNull.Value)
             cmdSql.Parameters.AddWithValue("@pst_text", txtText.Text)
             cmdSql.Parameters.AddWithValue("@pst_date", txtDate.Text)
-            If cbxAllow.Checked Then
-                cmdSql.Parameters.AddWithValue("@pst_allow_comments", 1)
-            Else
-                cmdSql.Parameters.AddWithValue("@pst_allow_comments", 0)
-            End If
+            cmdSql.Parameters.AddWithValue("@pst_allow_comments", 1)
+
             If cbxHidden.Checked Then
                 cmdSql.Parameters.AddWithValue("@pst_hidden", 1)
             Else
                 cmdSql.Parameters.AddWithValue("@pst_hidden", 0)
             End If
-            cmdSql.Parameters.AddWithValue("@admin_id", ddlAdmin.SelectedItem.Value)
+            cmdSql.Parameters.AddWithValue("@admin_id",IST.DataAccess.GetAdminId(HttpContext.Current.User.Identity.Name))
             conn.Open()
 
             If Len(ViewState("idVal")) = 0 Then
@@ -171,19 +153,17 @@
         End Select
     End Sub
     Sub EditForm(ByVal idVal As Integer)
-        Dim sql As String = "SELECT pst_id, pst_title, pst_summary, pst_text, pst_allow_comments, CONVERT(varchar,pst_date,101) as pst_date, pst_hidden, admin_id FROM posting WHERE pst_id = " & idVal
+        Dim sql As String = "SELECT pst_id, pst_title, pst_summary, pst_text, CONVERT(varchar,pst_date,101) as pst_date, pst_hidden, admin_id FROM posting WHERE pst_id = " & idVal
         Dim dtb As DataTable = IST.DataAccess.GetDataTable(sql)
         
         If dtb.Rows.Count > 0 Then
             Dim dr As DataRow = dtb.Rows(0)
             
             txtTitle.Text = dr("pst_title").ToString
-            txtSummary.Text = dr("pst_summary").ToString
             txtText.Text = dr("pst_text").ToString
             txtDate.Text = dr("pst_date").ToString
-            cbxAllow.Checked = dr("pst_allow_comments")
             cbxHidden.Checked = dr("pst_hidden")
-            ddlAdmin.SelectedValue = dr("admin_id")
+            lblAdmin.Text = HttpContext.Current.User.Identity.Name
             cbxlCats.ClearSelection()
             dtb = IST.DataAccess.GetDataTable("SELECT * FROM posting_category WHERE pst_id = " & idVal)
             For Each dr In dtb.Rows
@@ -236,12 +216,10 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="cpHoldMain" runat="Server">
     <asp:MultiView ID="mvwMain" runat="server">
         <asp:View ID="vwGrid" runat="server">
-            <asp:Button ID="btnAdd" runat="server" Text="Add New" OnClick="btnAdd_Click" CssClass="btn success" />
-            <div>
-                <h3>
-                    Search By</h3>
+            <asp:Button ID="btnAdd" runat="server" Text="Add New" OnClick="btnAdd_Click" CssClass="btn btn-large btn-success" />
+            <div class="well form-search">
                 Title
-                <asp:TextBox ID="txtSrchTitle" runat="server" />
+                <asp:TextBox ID="txtSrchTitle" runat="server" CssClass="input-medium search-query"/>
                 <asp:Button ID="btnSearch" Text="Search" OnClick="btnSearch_Click" runat="server"
                     CssClass="btn" />
             </div>
@@ -249,7 +227,7 @@
             <asp:DataGrid ID="dtGrd" runat="server" AutoGenerateColumns="false" DataKeyField="pst_id"
                 OnItemCommand="dgrdList_Command" AllowPaging="true" OnPageIndexChanged="dtGrd_Paging"
                 PageSize="3" PagerStyle-Mode="NumericPages" AllowSorting="true" OnSortCommand="dtGrd_SortChange"
-                CssClass="bordered-table" HeaderStyle-CssClass="gridHead">
+                CssClass="table table-bordered">
                 <Columns>
                     <asp:BoundColumn DataField="pst_title" HeaderText="Title" SortExpression="pst_title">
                     </asp:BoundColumn>
@@ -267,32 +245,29 @@
             </asp:DataGrid>
         </asp:View>
         <asp:View ID="vwFrm" runat="server">
-            <form>
+            <div class="form-horizontal">
             <fieldset>
-                <div class="clearfix">
+                <div class="control-group">
                     <label for="txtTitle">
                         Title</label>
-                    <div class="input">
+                    <div class="controls">
                         <asp:TextBox ID="txtTitle" runat="server" Width="500" ClientIDMode="Static"></asp:TextBox><asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="txtTitle"
                         ID="reqtxtTitle" runat="server"></asp:RequiredFieldValidator>
                     </div>
                 </div>
-                <div class="clearfix">
-                    <label for="txtSummary">Summary</label>
-                    <div class="input">
-                        <asp:TextBox ID="txtSummary" runat="server" TextMode="MultiLine" Width="500" Height="100" ClientIDMode="Static"></asp:TextBox>
-                    </div>
-                </div>
-                <div class="clearfix">
+                <div class="control-group">
                     <label for="txtText">Text</label>
-                    <div class="input">
+                    <div class="controls">
                         <asp:TextBox ID="txtText" runat="server" TextMode="MultiLine" Height="200" Width="500" ClientIDMode="Static"></asp:TextBox><asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="txtText" ID="reqtxtText"
                         runat="server"></asp:RequiredFieldValidator>
+                        <asp:HtmlEditorExtender ID="HtmlEditorExtender2"
+                            TargetControlID="txtText"
+                         runat="server" />
                     </div>
                 </div>
-                <div class="clearfix">
+                <div class="control-group">
                     <label for="txtDate">Date</label>
-                    <div class="input">
+                    <div class="controls">
                     <asp:TextBox ID="txtDate" runat="server" ClientIDMode="Static"></asp:TextBox>
                      <asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="txtDate" ID="reqtxtDate"
                         runat="server" Display="Dynamic"></asp:RequiredFieldValidator>
@@ -300,42 +275,35 @@
                         ErrorMessage="Invalid Date" ValidationExpression="^\d{1,2}\/\d{1,2}\/\d{4}$"></asp:RegularExpressionValidator>
                     </div>
                 </div>
-                <div class="clearfix">
+                <div class="control-group">
                     <label for="cbxHidden">Hidden</label>
-                    <div class="input">
+                    <div class="controls">
                      <asp:CheckBox ID="cbxHidden" runat="server" />
                     </div>
                 </div>
-                <div class="clearfix">
-                    <label for="cbxAllow">Allow Comments</label>
-                    <div class="input">
-                        <asp:CheckBox ID="cbxAllow" runat="server" />
-                    </div>
-                </div>
-                <div class="clearfix">
-                    <label for="ddlAdmin">Admin</label>
-                    <div class="input">
-                        <asp:DropDownList ID="ddlAdmin" runat="server">
-                    </asp:DropDownList>
-                    <asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="ddlAdmin"
-                        ID="reqddlAdmin" runat="server"></asp:RequiredFieldValidator>
-                    </div>
-                </div>
-                <div class="clearfix">
+                <div class="control-group">
                     <label for="cbxlCats">Categories</label>
-                    <div class="input">
-                     <asp:CheckBoxList ID="cbxlCats" runat="server" class="bordered-table">
+                    <div class="controls">
+                     <asp:CheckBoxList ID="cbxlCats" runat="server" CssClass="checkBoxLst">
                     </asp:CheckBoxList>
                     </div>
                 </div>
-               
+                <div class="control-group">
+                    <label for="lblAdmin" class="control-label">
+                        Last Editor
+                    </label>
+                    <div class="controls">
+                    <asp:Label ID="lblAdmin" runat="server">
+                    </asp:Label>
+                    </div>
+                </div>
             </fieldset>
-            <div class="actions">
-            <asp:Button ID="btnSubmit" Text="Add" OnClick="btnSubmit_Click" runat="server" CssClass="btn primary" />
+            <div class="form-actions">
+            <asp:Button ID="btnSubmit" Text="Add" OnClick="btnSubmit_Click" runat="server" CssClass="btn btn-primary" />
             <asp:Button ID="btnCancel" Text="Cancel" OnClick="btnCancel_Click" CausesValidation="false"
                         runat="server" CssClass="btn" />
             </div>
-            </form>
+            </div>
         </asp:View>
     </asp:MultiView>
 </asp:Content>

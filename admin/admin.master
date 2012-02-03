@@ -6,12 +6,12 @@
             quicklink.Visible=True
             If Not Page.IsPostBack Then
                 With ddlQuick
-                    .Items.Insert(0, New ListItem("Select...", ""))
-                    .Items.Insert(1, New ListItem("Admin", "Admin"))
-                    .Items.Insert(2, New ListItem("Articles", "Articles"))
-                    .Items.Insert(3, New ListItem("Questions","Questions"))
+                    .Items.Insert(0, New ListItem("Select...", "")) 
+                    .Items.Insert(1, New ListItem("CATNews", "CATNews"))
+                    .Items.Insert(2, New ListItem("Que-a-Day","Questions"))
+                    .Items.Insert(3, New ListItem("Topper's Say","Toppersay"))
                     .Items.Insert(4, New ListItem("Categories", "Categories"))
-                    .Items.Insert(5, New ListItem("Images", "Images"))
+                    .Items.Insert(5, New ListItem("Admin", "Admin"))
                 End With
             End If
         Else
@@ -25,14 +25,14 @@
         Select Case ddlQuick.SelectedValue
             Case "Admin"
                 Response.Redirect("../admin/admin.aspx")
-            Case "Articles"
+            Case "CATNews"
                 Response.Redirect("../admin/admin_articles.aspx")
             Case "Questions"
                 Response.Redirect("../admin/admin_que.aspx")
+            Case "Toppersay"
+                Response.Redirect("../admin/admin_topsay.aspx")
             Case "Categories"
                 Response.Redirect("../admin/admin_categories.aspx")
-            Case "Images"
-                Response.Redirect("../admin/admin_images.aspx")
         End Select
     End Sub
 

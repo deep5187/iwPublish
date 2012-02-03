@@ -1017,7 +1017,7 @@ table {
 .table-bordered {
   border: 1px solid #ddd;
   border-collapse: separate;
-  *border-collapse: collapsed;
+  border-collapse: collapsed;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;

@@ -1,6 +1,4 @@
-﻿
-
-.panHead
+﻿.panHead
 {
       background: #f5f6f6; /* old browsers */
 
@@ -31,15 +29,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfff4', end
 {
     width:800px;
 }
-td
-{
-    padding:2px 12px 2px 2px;
-}
 
-tr
-{   
-    padding:2px 2px 15px 2px;
-}
 #addBut
 {
     margin-top:10px;
@@ -107,22 +97,6 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b4e391', end
 {
 
     width:323px;
-    height:75px;
-    clear:both;
-    margin-bottom:5px;
-}
-
-#loginHead
-{
-    margin-top:5px;
-    width:323px;
-    height:25px;
-    clear:both;
-}
-
-#loginBody
-{
-	 width:323px;
     height:75px;
     clear:both;
     margin-bottom:5px;

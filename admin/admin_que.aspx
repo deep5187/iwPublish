@@ -1,5 +1,4 @@
 ﻿<%@ Page Title="" Language="VB" MasterPageFile="admin.master"  %>
-
 <%@ Import Namespace="System.IO" %>
 <%@ Register TagPrefix="asp" Namespace="AjaxControlToolkit" Assembly="AjaxControlToolkit"%>
 <%@ Import Namespace="System.Data" %>
@@ -7,9 +6,6 @@
 <%@ Import Namespace="TwitterVB2" %>
 <script runat="server">
     Dim conn As New SqlConnection
-    Shared cntTilClick As Integer = 0
-    Shared cntDateClick As Integer
-    Dim optionsTxtBox    As List(Of TextBox) = New List(Of TextBox)
     Private Const VirtualFileRoot As String = "~/files/images/"
     Sub page_load()
         If Not Page.IsPostBack Then
@@ -60,6 +56,8 @@
         txtQueText.Text = ""
         txtQueSolution.Text=""
         txtQueInstruction.Text=""
+        imgDiagram.ImageUrl="../images/noimage.png"
+        imgDiagramUrl.Value=""
         txtDate.Text = DateTime.Today
         cbxHidden.Checked = True
         cbxlCats.ClearSelection()
@@ -92,9 +90,24 @@
             End If
             Dim cmdSql As New SqlCommand(sql, conn)
             'storing image if it has been uploaded
-            If imgUpload.HasFile Then
-                    imgUpload.SaveAs(Server.MapPath(VirtualFileRoot & "/") & imgUpload.FileName)
-                    cmdSql.Parameters.AddWithValue("@q_diagram", imgUpload.FileName)
+            If imgUpload.HasFile Then 
+                Dim charsToTrim() As Char = {"*", " ", "\"}
+                Dim guid As Guid = System.Guid.NewGuid()
+                imgUpload.SaveAs(Server.MapPath(VirtualFileRoot & "/") & guid.ToString() & imgUpload.FileName.Trim(charsToTrim))
+                cmdSql.Parameters.AddWithValue("@q_diagram", guid.ToString() & imgUpload.FileName.Trim(charsToTrim))
+                'Deleting the old file once we have uploaded the new file
+                If imgDiagramUrl.Value IsNot "" Then
+                    If File.Exists(Server.MapPath(VirtualFileRoot & "/") & imgDiagramUrl.Value) Then
+                        File.Delete(Server.MapPath(VirtualFileRoot & "/") & imgDiagramUrl.Value)
+                    End If
+                End If
+            Else
+                'if now new file specified then restore the previous value
+                If imgDiagramUrl.Value = "" Then
+                    cmdSql.Parameters.AddWithValue("@q_diagram", DBNull.Value)
+                Else
+                    cmdSql.Parameters.AddWithValue("@q_diagram", imgDiagramUrl.Value)
+                End If
             End If
             cmdSql.Parameters.AddWithValue("@q_name", txtQueName.Text)
             
@@ -172,10 +185,20 @@
             Else
                 cbxHidden.Checked = false
             End If
+            
+            
             If Not Convert.IsDBNull(dr("q_diagram"))
-                imgDiagram.ImageUrl = "/iwPublish/files/images/ " & dr("q_diagram").ToString
+                If Request.IsLocal Then
+                    imgDiagram.ImageUrl = "http://" & Request.Url.Authority & "/iwPublish/files/images/" & dr("q_diagram").ToString
+                Else    
+                    imgDiagram.ImageUrl = "http://" & Request.Url.Authority & "/files/images/" & dr("q_diagram").ToString
+                End If
+                
+                imgDiagramUrl.Value = dr("q_diagram").ToString
             Else
-                imgDiagram.ImageUrl = Server.MapPath("~/images/noimage.png")
+                imgDiagram.ImageUrl = "../images/noimage.png"
+                imgDiagramUrl.Value=""
+                
             End If
             cbxlCats.ClearSelection()
             dtb = IST.DataAccess.GetDataTable("SELECT * FROM question_category WHERE q_id = " & idVal)
@@ -241,7 +264,7 @@
                 .Cells(0).Text = "No Options Added Yet..."
             End With
         End If
-        litPageHeader.Text="Options"
+        litPageHeader.Text=litPageHeader.Text & " > Options"
         mvwMain.SetActiveView(vwFrmOptions)
     End Sub
 
@@ -359,25 +382,29 @@
                         Name
                     </label>
                     <div class="controls">
-                    <asp:TextBox ID="txtQueName" runat="server" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox ID="txtQueName" runat="server" ClientIDMode="Static" Width="90%"></asp:TextBox>
+                    <asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="txtQueName"
+                        ID="reqtxtQueName" runat="server" Display="Dynamic"></asp:RequiredFieldValidator>
+                    <p class="help-block">Provide a meaningful name for the question. This is important as you will be searching questions on this.</p>
                     </div>
                 </div>
                 <div class="control-group">
                     <label for="txtQueInstruction" class="control-label">
                         Instruction</label>
                     <div class="controls">
-                        <asp:TextBox ID="txtQueInstruction" runat="server" TextMode="MultiLine" Height="200" Width="500" ClientIDMode="Static"></asp:TextBox><asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="txtQueSolution"
+                        <asp:TextBox ID="txtQueInstruction" runat="server" TextMode="MultiLine" Height="200" Width="90%" ClientIDMode="Static"></asp:TextBox><asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="txtQueSolution"
                         ID="RequiredFieldValidator1" runat="server"></asp:RequiredFieldValidator>
-                    </div>
-                    <asp:HtmlEditorExtender ID="HtmlEditorExtender3"
+                        <asp:HtmlEditorExtender ID="HtmlEditorExtender3"
                             TargetControlID="txtQueInstruction"
                          runat="server" />
+                    </div>
+                    
                 </div>
                 <div class="control-group">
                     <label for="txtQueText" class="control-label">
                         Text</label>
                     <div class="controls">
-                        <asp:TextBox ID="txtQueText" runat="server" TextMode="MultiLine" Height="200" Width="500" ClientIDMode="Static"></asp:TextBox><asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="txtQueText"
+                        <asp:TextBox ID="txtQueText" runat="server" TextMode="MultiLine" Height="200" Width="90%" ClientIDMode="Static"></asp:TextBox><asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="txtQueText"
                         ID="reqtxtQueText" runat="server"></asp:RequiredFieldValidator>
                         <asp:HtmlEditorExtender ID="HtmlEditorExtender1"
                             TargetControlID="txtQueText"
@@ -388,20 +415,25 @@
                     <label for="txtQueSolution" class="control-label">
                         Solution</label>
                     <div class="controls">
-                        <asp:TextBox ID="txtQueSolution" runat="server" TextMode="MultiLine" Height="200" Width="500" ClientIDMode="Static"></asp:TextBox><asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="txtQueSolution"
+                        <asp:TextBox ID="txtQueSolution" runat="server" TextMode="MultiLine" Height="200" Width="90%" ClientIDMode="Static"></asp:TextBox><asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="txtQueSolution"
                         ID="retxtQueSolution" runat="server"></asp:RequiredFieldValidator>
-                    </div>
-                    <asp:HtmlEditorExtender ID="HtmlEditorExtender2"
+                        <asp:HtmlEditorExtender ID="HtmlEditorExtender2"
                             TargetControlID="txtQueSolution"
                          runat="server" />
+                    </div>
+                    
                 </div>
                 <div class="control-group">
                 <label for="imgUpload" class="control-label">
                     Image
                 </label>
-                <div class="controls">
-                    <asp:Image ID="imgDiagram" ClientIDMode="Static" runat="server" Height="200" Width="200"  />
-                    <asp:FileUpload ID="imgUpload"   runat="server" onchange="imgUpload_onchange(this);"/>
+                <div class="controls"> 
+                    <asp:Image ID="imgDiagram" ClientIDMode="Static" runat="server" Height="200" Width="200" ImageUrl="../images/noimage.png"  AlternateText="Diagram"/>
+                    <asp:HiddenField ID="imgDiagramUrl" runat="server" /> 
+                    <p class="help-block">Current Diagram</p>
+                    <br />
+                    <asp:FileUpload ID="imgUpload"   runat="server"/>
+                    <p class="help-block">Upload New Diagram</p>
                 </div>
                 </div>
                 <div class="control-group">
@@ -419,6 +451,7 @@
                     <div class="controls">
                     <label class="checkbox"></label>
                     <asp:CheckBox ID="cbxHidden" runat="server" Checked="true"/>
+                    <p class="help-block">Checking this will hide it from the front end user</p>
                     </div>
                 </div>
                 <div class="control-group">

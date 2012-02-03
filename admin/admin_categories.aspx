@@ -81,8 +81,6 @@
 </script>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-    <link rel="Stylesheet" href="../buttons.css" />
-    <link rel="Stylesheet" href="../adminStyle.css" />
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cpHoldMain" Runat="Server">
     <asp:MultiView ID="mvwMain" runat="server">
