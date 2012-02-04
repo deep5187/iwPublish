@@ -15,8 +15,8 @@ Sub Page_Load()
         wrt.WriteStartElement("questions")
         'wrt.WriteAttributeString("version", "2.0")
         wrt.WriteElementString("pubDate", DateTime.Now.ToString("r"))
-        wrt.WriteElementString("managingEditor", "deshah@syr.edu (Deep Shah)")
-        wrt.WriteElementString("webMaster", "deshah@syr.edu (Deep Shah)")
+        wrt.WriteElementString("managingEditor", "deep5187@gmail.com (Deep Shah)")
+        wrt.WriteElementString("webMaster", "deep5187@gmail.com (Deep Shah)")
         Dim dtb As DataTable = IST.DataAccess.GetDataTable("SELECT TOP 10 * FROM question ORDER BY q_date DESC")
         
         For Each dr As DataRow In dtb.Rows
@@ -26,19 +26,22 @@ Sub Page_Load()
             If Convert.IsDBNull(dr("q_instruction"))
                 wrt.WriteElementString("instruction","")
             Else
-                wrt.WriteElementString("instruction","<![CDATA[" & dr("q_instruction") & "]]>")
+                wrt.WriteStartElement("instruction")
+                wrt.WriteCData(dr("q_instruction").ToString())
+                wrt.WriteEndElement() 'instruction
             End If
-            
-            wrt.WriteElementString("quetext", "<![CDATA[" & dr("q_text") & "]]>")
-            If Convert.IsDBNull(dr("q_diagram"))
-                wrt.WriteElementString("diagram","")
+            wrt.WriteStartElement("quetext")
+            wrt.WriteCData(dr("q_text").ToString())
+            wrt.WriteEndElement() 'quetext
+            If Convert.IsDBNull(dr("q_diagram")) Then
+                wrt.WriteElementString("diagram", "")
             Else
                 If Request.IsLocal Then
                 
-                wrt.WriteElementString("diagram", "http://" & Request.Url.Authority & "/iwPublish/files/images/" & dr("q_diagram"))
-            Else
-                wrt.WriteElementString("diagram", "http://" & Request.Url.Authority & "/files/images/" & dr("q_diagram"))
-            End If
+                    wrt.WriteElementString("diagram", "http://" & Request.Url.Authority & "/iwPublish/files/images/" & dr("q_diagram"))
+                Else
+                    wrt.WriteElementString("diagram", "http://" & Request.Url.Authority & "/files/images/" & dr("q_diagram"))
+                End If
             End If
             
             Dim dtbOption As DataTable = IST.DataAccess.GetDataTable("SELECT opt_text,opt_correct FROM question q JOIN [option] o ON q.q_id = o.q_id WHERE q.q_id = " & dr("q_id"))
@@ -46,11 +49,14 @@ Sub Page_Load()
             For Each drOpt As DataRow In dtbOption.Rows
                 wrt.WriteStartElement("option")
                 wrt.WriteAttributeString("correct",drOpt("opt_correct"))
-                wrt.WriteString(drOpt("opt_text"))
+                wrt.WriteString(drOpt("opt_text").toString())
                 wrt.WriteEndElement
                 'wrt.WriteAttributeString("correct",drOpt("opt_correct"))
             Next
             wrt.WriteEndElement() 'answer
+            wrt.WriteStartElement("solution")
+            Wrt.WriteCData(dr("q_solution").toString())
+            wrt.WriteEndElement() 'solution
             wrt.WriteEndElement() 'question
         Next
         

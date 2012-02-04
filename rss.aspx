@@ -19,18 +19,20 @@
         
         wrt.WriteStartElement("channel")
         
-        wrt.WriteElementString("title", "My First Blog")
-        wrt.WriteElementString("link", "http://deep-shah.com/")
+        wrt.WriteElementString("title", "CATapp - News")
+        wrt.WriteElementString("link", "http://catapp.in/")
         wrt.WriteElementString("pubDate", DateTime.Now.ToString("r"))
-        wrt.WriteElementString("managingEditor", "deshah@syr.edu (Deep Shah)")
-        wrt.WriteElementString("webMaster", "deshah@syr.edu (Deep Shah)")
+        wrt.WriteElementString("managingEditor", "deep5187@gmail.com (Deep Shah)")
+        wrt.WriteElementString("webMaster", "deep5187@gmail.com (Deep Shah)")
         Dim dtb As DataTable = IST.DataAccess.GetDataTable("SELECT TOP 10 * FROM posting ORDER BY pst_date DESC")
         
         For Each dr As DataRow In dtb.Rows
             wrt.WriteStartElement("item")
             wrt.WriteElementString("title", dr("pst_title"))
-            wrt.WriteElementString("link", "http://deep-shah.com/default.aspx?id=" & dr("pst_id"))
-            wrt.WriteElementString("description", dr("pst_text"))
+            'wrt.WriteElementString("link", "http://deep-shah.com/default.aspx?id=" & dr("pst_id"))
+            wrt.WriteStartElement("description")
+            wrt.WriteCData(dr("pst_text").ToString())
+            wrt.WriteEndElement()'description
             wrt.WriteElementString("guid", "http://deep-shah.com/default.aspx?id=" & dr("pst_id"))
             wrt.WriteElementString("pubDate", CType(dr("pst_date"),DateTime).ToString("r"))
             Dim sqlCat As String = "SELECT cat_name FROM posting_category pc JOIN category c ON  pc.cat_id = c.cat_id WHERE pst_id = " & dr("pst_id")
