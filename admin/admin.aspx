@@ -1,7 +1,7 @@
 ﻿<%@ Page Title="Administrator Administration" Language="VB" MasterPageFile="admin.master" %>
+
 <%@ Import Namespace="System.Data" %>
 <%@ Import Namespace="System.Data.SqlClient" %>
-
 <script runat="server">
     
     Dim Connection As SqlConnection
@@ -25,7 +25,7 @@
         
         dgrdList.DataSource = IST.DataAccess.GetDataTable(sql)
         dgrdList.DataBind()
-        
+        litPageHeader.Text="Admin"
         mvwMain.SetActiveView(vwList)
     End Sub
 
@@ -75,7 +75,7 @@
         txtPass.Text = ""
         ViewState("idVal") = ""
         btnSub.Text = "Add New"
-        
+        litPageHeader.Text="Admin <small>Add</small>"
         mvwMain.SetActiveView(vwForm)
     End Sub
     
@@ -83,6 +83,7 @@
     ' Cancel Clicked
     '********************
     Sub btnCancel_Click(ByVal s As Object, ByVal e As EventArgs)
+        litPageHeader.Text="Admin"
         mvwMain.SetActiveView(vwList)
     End Sub
     
@@ -120,95 +121,94 @@
             
             ViewState("idVal") = idval
             btnSub.Text = "Update"
+            litPageHeader.Text="Admin <small>Edit</small>"
             mvwMain.SetActiveView(vwForm)
         End If
     End Sub
     
 </script>
-<asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-    <link rel="Stylesheet" href="../buttons.css" />
-    <link rel="Stylesheet" href="../adminStyle.css" />
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
+</asp:Content>
+<asp:Content ID="PageHeader" ContentPlaceHolderID="cpHoldPageHeader" runat="server">
+    <asp:Literal ID="litPageHeader" runat="server">Admin</asp:Literal>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cpHoldMain" runat="server">
-
     <asp:MultiView ID="mvwMain" runat="server">
         <asp:View ID="vwList" runat="server">
-            <asp:Button ID="btnAdd" Text="Add" OnClick="btnAdd_Click" runat="server" />
-            <asp:DataGrid ID="dgrdList"
-             AutoGenerateColumns="false"
-             UseAccessibleHeader="true"
-             OnItemCommand="dgrdList_ItemCommand"
-             DataKeyField="admin_id"
-             runat="server"
-             CssClass="grid"  HeaderStyle-CssClass="gridHead">
+            <asp:Button ID="btnAdd" Text="Add New" OnClick="btnAdd_Click" CssClass="btn btn-large btn-success" runat="server" />
+            <asp:DataGrid ID="dgrdList" AutoGenerateColumns="false" UseAccessibleHeader="true"
+                OnItemCommand="dgrdList_ItemCommand" DataKeyField="admin_id" runat="server" CssClass="table table-bordered">
                 <Columns>
-                    <asp:BoundColumn DataField="admin_id" HeaderText="Primary Key" />
                     <asp:TemplateColumn HeaderText="Name">
                         <ItemTemplate>
-                            <%#Container.DataItem("admin_fname")%> <%# Container.DataItem("admin_lname")%>
+                            <%#Container.DataItem("admin_fname")%>
+                            <%# Container.DataItem("admin_lname")%>
                         </ItemTemplate>
                     </asp:TemplateColumn>
                     <asp:BoundColumn HeaderText="Username" DataField="admin_username" />
                     <asp:TemplateColumn HeaderText="Email">
                         <ItemTemplate>
-                           <a href="mailto:<%#Container.DataItem("admin_email")%>"><%# Container.DataItem("admin_email")%></a>
+                            <a href="mailto:<%#Container.DataItem("admin_email")%>">
+                                <%# Container.DataItem("admin_email")%></a>
                         </ItemTemplate>
                     </asp:TemplateColumn>
-
-                    <asp:ButtonColumn ButtonType="PushButton" CommandName="edit" Text="Edit" />
                     <asp:TemplateColumn>
                         <ItemTemplate>
-                            <asp:Button ID="btnDel" Text="Delete" CommandName="delete" OnClientClick="javascript:return confirm('Are you sure you want to delete this record?');" runat="server" />
+                            <asp:Button id="btnEdit" CommandName="edit" Text="Edit" CssClass="btn btn-small" runat="server" />
+                            <asp:Button ID="btnDel" Text="Delete" CommandName="delete" CssClass="btn btn-small" OnClientClick="javascript:return confirm('Are you sure you want to delete this record?');"
+                                runat="server" />
                         </ItemTemplate>
                     </asp:TemplateColumn>
                 </Columns>
             </asp:DataGrid>
         </asp:View>
-
         <asp:View ID="vwForm" runat="server">
-        <div class="grid">
-       
-            <table  >
-                <tr>
-                    <td>First Name</td>
-                    <td>
+            <div class="form-horizontal">
+                <div class="control-group">
+                    <label for="txtFname">
+                        Name
+                    </label>
+                    <div class="controls">
                         <asp:TextBox ID="txtFname" runat="server" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>Last Name</td>
-                    <td>
                         <asp:TextBox ID="txtLname" runat="server" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>User Name</td>
-                    <td>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label for="txtUname">
+                        User Name
+                    </label>
+                    <div class="controls">
                         <asp:TextBox ID="txtUname" runat="server" />
-                        <asp:RequiredFieldValidator ID="RequiredFieldValidator1" ControlToValidate="txtUname" ErrorMessage="Required" Display="Dynamic" runat="server" />
-                    </td>
-                </tr>
-                 <tr>
-                    <td>Password</td>
-                    <td>
+                        <asp:RequiredFieldValidator ID="RequiredFieldValidator1" ControlToValidate="txtUname"
+                            ErrorMessage="Required" Display="Dynamic" runat="server" />
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label for="txtPass">
+                        Password
+                    </label>
+                    <div class="controls">
                         <asp:TextBox ID="txtPass" TextMode="Password" runat="server" />
-                        <asp:RequiredFieldValidator ID="RequiredFieldValidator2" ControlToValidate="txtPass" ErrorMessage="Required" Display="Dynamic" runat="server" />
-                    </td>
-                </tr>
-                 <tr>
-                    <td>Email</td>
-                    <td>
+                        <asp:RequiredFieldValidator ID="RequiredFieldValidator2" ControlToValidate="txtPass"
+                            ErrorMessage="Required" Display="Dynamic" runat="server" />
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label for="txtEmail">
+                        Email
+                    </label>
+                    <div class="controls">
                         <asp:TextBox ID="txtEmail" runat="server" />
-                        <asp:RequiredFieldValidator ID="RequiredFieldValidator3" ControlToValidate="txtEmail" ErrorMessage="Required" Display="Dynamic" runat="server" />
-                    </td>
-                </tr>
-            </table>
-            <asp:Button ID="btnSub" Text="Submit" onclick="btnSub_Click" runat="server" />
-            <asp:Button ID="btnCancel" Text="Cancel" OnClick="btnCancel_Click" CausesValidation="false" runat="server" />
-             </div>
+                        <asp:RequiredFieldValidator ID="RequiredFieldValidator3" ControlToValidate="txtEmail"
+                            ErrorMessage="Required" Display="Dynamic" runat="server" />
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <asp:Button ID="btnSub" Text="Submit" OnClick="btnSub_Click" runat="server" CssClass="btn btn-primary"/>
+                    <asp:Button ID="btnCancel" Text="Cancel" OnClick="btnCancel_Click" CausesValidation="false" CssClass="btn"
+                        runat="server" />
+                </div>
+            </div>
         </asp:View>
     </asp:MultiView>
-
-        
-
 </asp:Content>
