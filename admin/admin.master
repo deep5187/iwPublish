@@ -59,7 +59,7 @@
             <div class="container">
                 <a class="brand" href="#">CATapp Publishing</a>
                 <ul id="quicklink" runat="server" class="nav">
-                    <li>Quick Links :
+                    <li>
                         <asp:DropDownList ID="ddlQuick" runat="server" OnSelectedIndexChanged="ddlQuick_SelectedIndexChanged"
                             AutoPostBack="true">
                         </asp:DropDownList>

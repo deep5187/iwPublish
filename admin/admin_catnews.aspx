@@ -220,6 +220,11 @@
                     </asp:BoundColumn>
                     <asp:BoundColumn DataField="pst_date" HeaderText="Date" SortExpression="pst_date">
                     </asp:BoundColumn>
+                    <asp:TemplateColumn HeaderText="Hidden" SortExpression="pst_hidden">
+                        <ItemTemplate>
+                            <asp:CheckBox ID="chkHidden" runat="server" Checked='<%# Eval("pst_hidden") %>' Enabled="false"  />
+                        </ItemTemplate>
+                    </asp:TemplateColumn>
                     <asp:TemplateColumn>
                         <ItemTemplate>
                             <asp:LinkButton ID="btnEdit" Text="Edit" CommandName="edit" CssClass="btn small"

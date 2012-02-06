@@ -3,7 +3,7 @@
 <script runat="server">
     Sub Page_Load()
         If HttpContext.Current.User.Identity.IsAuthenticated Then
-            Response.Redirect("~/admin/admin_articles.aspx")
+            Response.Redirect("~/admin/admin_catnews.aspx")
         Else
             Response.Redirect("~/login.aspx")
         End If

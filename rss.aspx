@@ -24,14 +24,14 @@
         wrt.WriteElementString("pubDate", DateTime.Now.ToString("r"))
         wrt.WriteElementString("managingEditor", "deep5187@gmail.com (Deep Shah)")
         wrt.WriteElementString("webMaster", "deep5187@gmail.com (Deep Shah)")
-        Dim dtb As DataTable = IST.DataAccess.GetDataTable("SELECT TOP 10 * FROM posting ORDER BY pst_date DESC")
+        Dim dtb As DataTable = IST.DataAccess.GetDataTable("SELECT TOP 10 * FROM posting WHERE pst_hidden = 'false' ORDER BY pst_date DESC")
         
         For Each dr As DataRow In dtb.Rows
             wrt.WriteStartElement("item")
             wrt.WriteElementString("title", dr("pst_title"))
             'wrt.WriteElementString("link", "http://deep-shah.com/default.aspx?id=" & dr("pst_id"))
             wrt.WriteStartElement("description")
-            wrt.WriteCData(dr("pst_text").ToString())
+            wrt.WriteCData(dr("pst_text").ToString)
             wrt.WriteEndElement()'description
             wrt.WriteElementString("guid", "http://deep-shah.com/default.aspx?id=" & dr("pst_id"))
             wrt.WriteElementString("pubDate", CType(dr("pst_date"),DateTime).ToString("r"))
