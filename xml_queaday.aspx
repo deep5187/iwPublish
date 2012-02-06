@@ -17,7 +17,7 @@ Sub Page_Load()
         wrt.WriteElementString("pubDate", DateTime.Now.ToString("r"))
         wrt.WriteElementString("managingEditor", "deep5187@gmail.com (Deep Shah)")
         wrt.WriteElementString("webMaster", "deep5187@gmail.com (Deep Shah)")
-        Dim dtb As DataTable = IST.DataAccess.GetDataTable("SELECT TOP 10 * FROM question ORDER BY q_date DESC")
+        Dim dtb As DataTable = IST.DataAccess.GetDataTable("SELECT TOP 10 * FROM question WHERE q_hidden='false' ORDER BY q_date DESC")
         
         For Each dr As DataRow In dtb.Rows
             wrt.WriteStartElement("question")

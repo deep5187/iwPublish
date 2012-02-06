@@ -13,7 +13,7 @@
 </script>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head id="Head1" runat="server">
-    <title>Deep Shah's Blog</title>
+    <title>CATapp Publishing</title>
     <link href="~/style/bootstrap.css" rel="stylesheet" type="text/css" />
     <link href="~/style/StyleSheet.css" rel="Stylesheet" type="text/css" />
     <asp:ContentPlaceHolder ID="head" runat="server">

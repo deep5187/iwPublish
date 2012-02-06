@@ -20,7 +20,7 @@
             ViewState("sortField") = "ts_percentile"
             ViewState("sortOrder") = "DESC"
         End If
-        adminSql = " SELECT  ts_id,ts_fname,ts_lname,ts_percentile,ts_year,admin_id" & _
+        adminSql = " SELECT  ts_id,ts_fname,ts_lname,ts_percentile,ts_year,ts_hidden,admin_id" & _
                                  " FROM topsay "
         If txtSrchName.Text <> String.Empty Then
             adminSql &= " WHERE ts_name LIKE '%" & txtSrchName.Text.Replace("'", "''") & "%'"
@@ -244,6 +244,11 @@
                     </asp:BoundColumn>
                     <asp:BoundColumn DataField="ts_percentile" HeaderText="Percentile" SortExpression="ts_percentile">
                     </asp:BoundColumn>
+                    <asp:TemplateColumn HeaderText="Hidden" SortExpression="ts_hidden">
+                        <ItemTemplate>
+                            <asp:CheckBox ID="chkHidden" runat="server" Checked='<%# Eval("ts_hidden") %>' Enabled="false"  />
+                        </ItemTemplate>
+                    </asp:TemplateColumn>
                     <asp:TemplateColumn>
                         <ItemTemplate>
                             <asp:LinkButton ID="btnEdit" Text="Edit" CommandName="edit" CssClass="btn small"
@@ -340,6 +345,7 @@
                     <label for="cbxHidden">Hidden</label>
                     <div class="controls">
                      <asp:CheckBox ID="cbxHidden" runat="server" />
+                     <p class="help-block">Checking this will hide this topper from the front end user</p>
                     </div>
                 </div>
                 <div class="control-group">

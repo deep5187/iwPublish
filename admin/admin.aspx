@@ -170,7 +170,10 @@
                     </label>
                     <div class="controls">
                         <asp:TextBox ID="txtFname" runat="server" />
+                        <p class="help-block">First</p>
+                        <br />
                         <asp:TextBox ID="txtLname" runat="server" />
+                        <p class="help-block">Last</p>
                     </div>
                 </div>
                 <div class="control-group">

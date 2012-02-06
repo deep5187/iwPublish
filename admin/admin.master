@@ -26,9 +26,9 @@
             Case "Admin"
                 Response.Redirect("../admin/admin.aspx")
             Case "CATNews"
-                Response.Redirect("../admin/admin_articles.aspx")
+                Response.Redirect("../admin/admin_catnews.aspx")
             Case "Questions"
-                Response.Redirect("../admin/admin_que.aspx")
+                Response.Redirect("../admin/admin_queaday.aspx")
             Case "Toppersay"
                 Response.Redirect("../admin/admin_topsay.aspx")
             Case "Categories"
@@ -44,7 +44,7 @@
 </script>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head id="Head1" runat="server">
-    <title>Deep Shah's Blog</title>
+    <title>CATapp Publishing</title>
     <link href="~/style/bootstrap.min.css" rel="stylesheet" type="text/css" />
    <link href="~/style/StyleSheet.css" rel="Stylesheet" type="text/css" />
    <link href="~/style/adminStyle.css" rel="Stylesheet" type="text/css" />
