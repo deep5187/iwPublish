@@ -55,6 +55,7 @@
         txtQueName.Text = ""
         txtQueText.Text = ""
         txtQueSolution.Text=""
+        txtQueHint.Text=""
         txtQueInstruction.Text=""
         imgDiagram.ImageUrl="../images/noimage.png"
         imgDiagramUrl.Value=""
@@ -80,11 +81,11 @@
             Dim sql As String
             
             If Len(ViewState("idVal")) = 0 Then
-                sql = "INSERT INTO question(q_name, q_text,q_solution,q_instruction, q_date, q_hidden,q_diagram, admin_id) VALUES" & _
-                              "(@q_name, @q_text,@q_solution,@q_instruction, @q_date, @q_hidden,@q_diagram, @admin_id); SELECT @@IDENTITY;"
+                sql = "INSERT INTO question(q_name, q_text,q_hint,q_solution,q_instruction, q_date, q_hidden,q_diagram, admin_id) VALUES" & _
+                              "(@q_name, @q_text,@q_hint,@q_solution,@q_instruction, @q_date, @q_hidden,@q_diagram, @admin_id); SELECT @@IDENTITY;"
                 flag = "i"
             Else
-                sql = "UPDATE question SET q_name=@q_name, q_text=@q_text,q_instruction=@q_instruction, q_solution=@q_solution," & _
+                sql = "UPDATE question SET q_name=@q_name, q_text=@q_text,q_instruction=@q_instruction,q_hint=@q_hint, q_solution=@q_solution," & _
                       "q_date=@q_date, q_hidden=@q_hidden,q_diagram=@q_diagram, admin_id = @admin_id WHERE q_id = " & ViewState("idVal")
                 flag = "u"
             End If
@@ -114,6 +115,11 @@
             cmdSql.Parameters.AddWithValue("@q_text", txtQueText.Text)
             cmdSql.Parameters.AddWithValue("@q_date", txtDate.Text)
             cmdSql.Parameters.AddWithValue("@q_solution",txtQueSolution.Text)
+            If txtQueHint.Text <> ""
+                cmdSql.Parameters.AddWithValue("@q_hint",txtQueHint.Text)
+            Else 
+                cmdSql.Parameters.AddWithValue("@q_hint",DBNull.Value)
+            End If
             cmdSql.Parameters.AddWithValue("@q_instruction",txtQueInstruction.text)
             If cbxHidden.Checked Then
                 cmdSql.Parameters.AddWithValue("@q_hidden", 1)
@@ -169,7 +175,7 @@
         End Select
     End Sub
     Sub EditForm(ByVal idVal As Integer)
-       Dim sql As String = "SELECT q_id, q_name, q_text, isnull(q_solution,'') as q_solution,isnull(q_instruction,'') as q_instruction, CONVERT(varchar,q_date,101) as q_date, q_hidden,q_diagram, admin_id FROM question WHERE q_id = " & idVal
+       Dim sql As String = "SELECT q_id, q_name, q_text,isnull(q_hint,'') as q_hint, isnull(q_solution,'') as q_solution,isnull(q_instruction,'') as q_instruction, CONVERT(varchar,q_date,101) as q_date, q_hidden,q_diagram, admin_id FROM question WHERE q_id = " & idVal
        Dim dtb As DataTable = IST.DataAccess.GetDataTable(sql)
         
         If dtb.Rows.Count > 0 Then
@@ -178,6 +184,7 @@
             txtQueName.Text = dr("q_name").ToString
             txtQueText.Text = dr("q_text").ToString
             txtQueSolution.Text = dr("q_solution").ToString
+            txtQueHint.Text= dr("q_hint").ToString
             txtQueInstruction.Text = dr("q_instruction").ToString
             txtDate.Text = dr("q_date").ToString
             If Not Convert.IsDBNull(dr("q_hidden"))
@@ -411,6 +418,18 @@
                          runat="server" />
                     </div>
                 </div>
+                <div class="control-group">
+                    <label for="txtQueHint" class="control-label">
+                        Hint</label>
+                    <div class="controls">
+                        <asp:TextBox ID="txtQueHint" runat="server" TextMode="MultiLine" Height="100" Width="90%" ClientIDMode="Static"></asp:TextBox>
+                        <asp:HtmlEditorExtender ID="HtmlEditorExtender4"
+                            TargetControlID="txtQueHint"
+                         runat="server" />
+                    </div>
+                </div>
+                <br />
+                <br />
                 <div class="control-group">
                     <label for="txtQueSolution" class="control-label">
                         Solution</label>

@@ -54,6 +54,13 @@ Sub Page_Load()
                 'wrt.WriteAttributeString("correct",drOpt("opt_correct"))
             Next
             wrt.WriteEndElement() 'answer
+            If Convert.IsDBNull(dr("q_hint"))
+                wrt.WriteElementString("hint","")
+            Else
+                wrt.WriteStartElement("hint")
+                wrt.WriteCData(dr("q_hint").ToString())
+                wrt.WriteEndElement() 'hint
+            End If
             wrt.WriteStartElement("solution")
             Wrt.WriteCData(dr("q_solution").toString())
             wrt.WriteEndElement() 'solution
