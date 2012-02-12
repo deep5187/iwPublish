@@ -23,6 +23,8 @@ Sub Page_Load()
             wrt.WriteStartElement("question")
             wrt.WriteAttributeString("id",dr("q_id"))
             wrt.WriteElementString("quedate", dr("q_date"))
+            wrt.WriteElementString("quename",dr("q_name"))
+            
             If Convert.IsDBNull(dr("q_instruction"))
                 wrt.WriteElementString("instruction","")
             Else
@@ -35,6 +37,7 @@ Sub Page_Load()
             wrt.WriteEndElement() 'quetext
             If Convert.IsDBNull(dr("q_diagram")) Then
                 wrt.WriteElementString("diagram", "")
+                wrt.WriteElementString("queimagename","")
             Else
                 If Request.IsLocal Then
                 
@@ -42,6 +45,7 @@ Sub Page_Load()
                 Else
                     wrt.WriteElementString("diagram", "http://" & Request.Url.Authority & "/files/images/" & dr("q_diagram"))
                 End If
+                wrt.WriteElementString("queimagename",dr("q_diagram").ToString.substring(0,dr("q_diagram").ToString.LastIndexOf(".")))
             End If
             
             Dim dtbOption As DataTable = IST.DataAccess.GetDataTable("SELECT opt_text,opt_correct FROM question q JOIN [option] o ON q.q_id = o.q_id WHERE q.q_id = " & dr("q_id"))

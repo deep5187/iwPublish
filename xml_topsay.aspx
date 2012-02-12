@@ -21,6 +21,7 @@ Sub Page_Load()
         
         For Each dr As DataRow In dtb.Rows
             wrt.WriteStartElement("topper")
+            wrt.WriteAttributeString("id",dr("ts_id"))
             wrt.WriteElementString("name", dr("ts_fname").ToString & " " & dr("ts_lname").ToString)
             wrt.WriteElementString("percentile",dr("ts_percentile"))
             wrt.WriteElementString("year",dr("ts_year"))
@@ -32,6 +33,7 @@ Sub Page_Load()
             wrt.WriteEndElement 'say
             If Convert.IsDBNull(dr("ts_image")) Then
                 wrt.WriteElementString("photo", "")
+                wrt.WriteElementString("imagename","")
             Else
                 If Request.IsLocal Then
                 
@@ -39,6 +41,7 @@ Sub Page_Load()
                 Else
                     wrt.WriteElementString("photo", "http://" & Request.Url.Authority & "/files/images/" & dr("ts_image"))
                 End If
+                 wrt.WriteElementString("imagename",dr("ts_image").ToString.substring(0,dr("ts_image").ToString.LastIndexOf(".")))
             End If
             wrt.WriteEndElement() 'topper
         Next
