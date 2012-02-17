@@ -323,9 +323,6 @@
                         <asp:TextBox ID="txtQuote" runat="server" TextMode="MultiLine" Height="200" Width="90%" ClientIDMode="Static"></asp:TextBox>
                         <asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="txtQuote"
                         ID="RequiredFieldValidator2" runat="server"></asp:RequiredFieldValidator>
-                        <asp:HtmlEditorExtender ID="HtmlEditorExtender3"
-                            TargetControlID="txtQuote"
-                         runat="server" />
                     </div>
                     
                 </div>

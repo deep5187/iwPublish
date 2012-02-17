@@ -271,7 +271,10 @@
                 .Cells(0).Text = "No Options Added Yet..."
             End With
         End If
+        If Not litPageHeader.Text.Contains("Options") Then
+          
         litPageHeader.Text=litPageHeader.Text & " > Options"
+        End If
         mvwMain.SetActiveView(vwFrmOptions)
     End Sub
 

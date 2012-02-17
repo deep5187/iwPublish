@@ -53,7 +53,7 @@ Sub Page_Load()
             For Each drOpt As DataRow In dtbOption.Rows
                 wrt.WriteStartElement("option")
                 wrt.WriteAttributeString("correct",drOpt("opt_correct"))
-                wrt.WriteString(drOpt("opt_text").toString())
+                wrt.WriteCData(drOpt("opt_text").toString())
                 wrt.WriteEndElement
                 'wrt.WriteAttributeString("correct",drOpt("opt_correct"))
             Next
