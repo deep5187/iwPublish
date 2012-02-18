@@ -1,5 +1,5 @@
 ﻿<%@ Page Title="" Language="VB" MasterPageFile="admin.master" %>
-<%@ Register TagPrefix="asp" Namespace="AjaxControlToolkit" Assembly="AjaxControlToolkit"%>
+<%@ Register Assembly="CKEditor.NET" Namespace="CKEditor.NET" TagPrefix="CKEditor" %>
 <%@ Import Namespace="System.Data" %>
 <%@ Import Namespace="System.Data.SqlClient" %>
 <%@ Import Namespace="System.IO" %>
@@ -330,12 +330,9 @@
                     <label for="txtText" class="control-label">
                         Text</label>
                     <div class="controls">
-                        <asp:TextBox ID="txtText" runat="server" TextMode="MultiLine" Height="200" Width="90%" ClientIDMode="Static"></asp:TextBox>
+                    <CKEditor:CKEditorControl ID="txtText" runat="server"></CKEditor:CKEditorControl>
                         <asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="txtText"
                         ID="reqtxtQueText" runat="server"></asp:RequiredFieldValidator>
-                        <asp:HtmlEditorExtender ID="HtmlEditorExtender1"
-                            TargetControlID="txtText"
-                         runat="server" />
                     </div>
                 </div>
                 <div class="control-group">

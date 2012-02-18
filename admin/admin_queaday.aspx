@@ -1,6 +1,6 @@
 ﻿<%@ Page Title="" Language="VB" MasterPageFile="admin.master"  %>
 <%@ Import Namespace="System.IO" %>
-<%@ Register TagPrefix="asp" Namespace="AjaxControlToolkit" Assembly="AjaxControlToolkit"%>
+<%@ Register Assembly="CKEditor.NET" Namespace="CKEditor.NET" TagPrefix="CKEditor" %>
 <%@ Import Namespace="System.Data" %>
 <%@ Import Namespace="System.Data.SqlClient" %>
 <%@ Import Namespace="TwitterVB2" %>
@@ -402,11 +402,10 @@
                     <label for="txtQueInstruction" class="control-label">
                         Instruction</label>
                     <div class="controls">
-                        <asp:TextBox ID="txtQueInstruction" runat="server" TextMode="MultiLine" Height="200" Width="90%" ClientIDMode="Static"></asp:TextBox><asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="txtQueSolution"
+                        <CKEditor:CKEditorControl ID="txtQueInstruction" runat="server" TextMode="MultiLine" Height="200" Width="90%" ClientIDMode="Static"></CKEditor:CKEditorControl>
+                        <asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="txtQueSolution"
                         ID="RequiredFieldValidator1" runat="server"></asp:RequiredFieldValidator>
-                        <asp:HtmlEditorExtender ID="HtmlEditorExtender3"
-                            TargetControlID="txtQueInstruction"
-                         runat="server" />
+                        
                     </div>
                     
                 </div>
@@ -414,21 +413,18 @@
                     <label for="txtQueText" class="control-label">
                         Text</label>
                     <div class="controls">
-                        <asp:TextBox ID="txtQueText" runat="server" TextMode="MultiLine" Height="200" Width="90%" ClientIDMode="Static"></asp:TextBox><asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="txtQueText"
+                        <CKEditor:CKEditorControl ID="txtQueText" runat="server" TextMode="MultiLine" Height="200" Width="90%" ClientIDMode="Static"></CKEditor:CKEditorControl>
+                        <asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="txtQueText"
                         ID="reqtxtQueText" runat="server"></asp:RequiredFieldValidator>
-                        <asp:HtmlEditorExtender ID="HtmlEditorExtender1"
-                            TargetControlID="txtQueText"
-                         runat="server" />
+                        
                     </div>
                 </div>
                 <div class="control-group">
                     <label for="txtQueHint" class="control-label">
                         Hint</label>
                     <div class="controls">
-                        <asp:TextBox ID="txtQueHint" runat="server" TextMode="MultiLine" Height="100" Width="90%" ClientIDMode="Static"></asp:TextBox>
-                        <asp:HtmlEditorExtender ID="HtmlEditorExtender4"
-                            TargetControlID="txtQueHint"
-                         runat="server" />
+                        <CKEditor:CKEditorControl ID="txtQueHint" runat="server" TextMode="MultiLine" Height="100" Width="90%" ClientIDMode="Static"></CKEditor:CKEditorControl>
+                        
                     </div>
                 </div>
                 <br />
@@ -437,11 +433,9 @@
                     <label for="txtQueSolution" class="control-label">
                         Solution</label>
                     <div class="controls">
-                        <asp:TextBox ID="txtQueSolution" runat="server" TextMode="MultiLine" Height="200" Width="90%" ClientIDMode="Static"></asp:TextBox><asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="txtQueSolution"
+                        <CKEditor:CKEditorControl ID="txtQueSolution" runat="server" TextMode="MultiLine" Height="200" Width="90%" ClientIDMode="Static"></CKEditor:CKEditorControl><asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="txtQueSolution"
                         ID="retxtQueSolution" runat="server"></asp:RequiredFieldValidator>
-                        <asp:HtmlEditorExtender ID="HtmlEditorExtender2"
-                            TargetControlID="txtQueSolution"
-                         runat="server" />
+                      
                     </div>
                     
                 </div>
