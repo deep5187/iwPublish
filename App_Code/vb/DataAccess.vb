@@ -23,6 +23,21 @@ Namespace IST
             Return adminId
         End Function
 
+        Public Shared Function CreateOrReturnUser(ByVal name As String, ByVal email As String, ByVal phoneNo As String) As Integer
+            Dim searchUserSql As String = "SELECT id FROM iwadmin.[user] WHERE name = '" + name + "' and email LIKE '" + email + "'"
+            Dim id As Integer = -1
+            Dim dtb As DataTable = GetDataTable(searchUserSql)
+            If dtb.Rows.Count > 0 Then
+                id = CInt(dtb.Rows(0)("id"))
+            Else
+                Dim sql As String = "INSERT INTO iwadmin.[user] VALUES('" + name + "','" + email + "','" + phoneNo + "'); SELECT @@IDENTITY; "
+                Dim cmdSql As New SqlCommand(sql, Conn)
+                Conn.Open()
+                id = CType(cmdSql.ExecuteScalar(), Integer)
+                Conn.Close()
+            End If
+            Return id
+        End Function
     End Class
 
 End Namespace
