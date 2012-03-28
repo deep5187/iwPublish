@@ -1,11 +1,11 @@
-﻿<%@ WebHandler Class="admin.HelloWorld" %>
+﻿<%@ WebHandler Class="admin.RegistrationService" %>
 Imports System.Web
 Imports System.Security.Cryptography
 Imports Jayrock.Json
 Imports Jayrock.JsonRpc
 Imports Jayrock.JsonRpc.Web
 Namespace admin
-	Public Class HelloWorld
+	Public Class RegistrationService
 		Inherits JsonRpcHandler
 		<JsonRpcMethod("greetings")> _
 		Public Function Greetings() As Dictionary(of String,Object)
@@ -28,15 +28,17 @@ Namespace admin
             Dim hashValue As Byte() = hmac.ComputeHash(byteText)
             
             result = Convert.ToBase64String(hashValue)
+
             Dim id As Integer = -1
-            If result.Equals(hash) Then
+            If result.Trim().Equals(hash.Trim()) Then
                 id = IST.DataAccess.CreateOrReturnUser(name, email, phoneNo)
                 d.Add("error", DBNull.Value)
-                d.Add("result", "" + id)
+                d.Add("result", id)
             Else
                 d.Add("error", 1001)
-                d.Add("result", "" + id)
+                d.Add("result", id)
             End If
+            d.add("hash",result)
             d.Add("jsonrpc", "2.0")          
             d.Add("id", 0)
             

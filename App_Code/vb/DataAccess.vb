@@ -30,11 +30,18 @@ Namespace IST
             If dtb.Rows.Count > 0 Then
                 id = CInt(dtb.Rows(0)("id"))
             Else
-                Dim sql As String = "INSERT INTO iwadmin.[user] VALUES('" + name + "','" + email + "','" + phoneNo + "'); SELECT @@IDENTITY; "
-                Dim cmdSql As New SqlCommand(sql, Conn)
-                Conn.Open()
-                id = CType(cmdSql.ExecuteScalar(), Integer)
-                Conn.Close()
+                Try
+                    Dim sql As String = "INSERT INTO iwadmin.[user] VALUES('" + name + "','" + email + "','" + phoneNo + "'); SELECT @@IDENTITY; "
+                    Dim cmdSql As New SqlCommand(sql, Conn)
+                    If Conn.State <> ConnectionState.Open Then
+                        Conn.Open()
+                    End If
+                    id = CType(cmdSql.ExecuteScalar(), Integer)
+                    Conn.Close()
+                Catch Ex As Exception
+                Finally
+                    Conn.Close()
+                End Try
             End If
             Return id
         End Function
