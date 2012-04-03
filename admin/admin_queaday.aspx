@@ -402,8 +402,8 @@
                     <label for="txtQueInstruction" class="control-label">
                         Instruction</label>
                     <div class="controls">
-                        <CKEditor:CKEditorControl ID="txtQueInstruction" runat="server" TextMode="MultiLine" Height="200" Width="90%" ClientIDMode="Static"></CKEditor:CKEditorControl>
-                        <asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="txtQueSolution"
+                        <asp:TextBox ID="txtQueInstruction" runat="server" TextMode="MultiLine" Height="200" Width="90%" ClientIDMode="Static"></asp:TextBox>
+                        <asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="txtQueInstruction"
                         ID="RequiredFieldValidator1" runat="server"></asp:RequiredFieldValidator>
                         
                     </div>
@@ -413,7 +413,7 @@
                     <label for="txtQueText" class="control-label">
                         Text</label>
                     <div class="controls">
-                        <CKEditor:CKEditorControl ID="txtQueText" runat="server" TextMode="MultiLine" Height="200" Width="90%" ClientIDMode="Static"></CKEditor:CKEditorControl>
+                        <asp:TextBox ID="txtQueText" runat="server" TextMode="MultiLine" Height="200" Width="90%" ClientIDMode="Static"></asp:TextBox>
                         <asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="txtQueText"
                         ID="reqtxtQueText" runat="server"></asp:RequiredFieldValidator>
                         
@@ -423,8 +423,7 @@
                     <label for="txtQueHint" class="control-label">
                         Hint</label>
                     <div class="controls">
-                        <CKEditor:CKEditorControl ID="txtQueHint" runat="server" TextMode="MultiLine" Height="100" Width="90%" ClientIDMode="Static"></CKEditor:CKEditorControl>
-                        
+                        <CKEditor:CKEditorControl ID="txtQueHint" runat="server" TextMode="MultiLine" Height="100" Width="90%" ClientIDMode="Static"></CKEditor:CKEditorControl>           
                     </div>
                 </div>
                 <br />
@@ -433,7 +432,8 @@
                     <label for="txtQueSolution" class="control-label">
                         Solution</label>
                     <div class="controls">
-                        <CKEditor:CKEditorControl ID="txtQueSolution" runat="server" TextMode="MultiLine" Height="200" Width="90%" ClientIDMode="Static"></CKEditor:CKEditorControl><asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="txtQueSolution"
+                        <CKEditor:CKEditorControl ID="txtQueSolution" runat="server" TextMode="MultiLine" Height="200" Width="90%" ClientIDMode="Static"></CKEditor:CKEditorControl>
+                        <asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="txtQueSolution"
                         ID="retxtQueSolution" runat="server"></asp:RequiredFieldValidator>
                       
                     </div>

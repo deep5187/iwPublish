@@ -53,7 +53,6 @@
 </head>
 <body>
     <form id="form1" runat="server">
-    <ajaxToolkit:ToolkitScriptManager runat="Server" />
     <div class="navbar navbar-fixed-top">
         <div class="navbar-inner">
             <div class="container">

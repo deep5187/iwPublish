@@ -31,12 +31,15 @@ Namespace IST
                 id = CInt(dtb.Rows(0)("id"))
             Else
                 Try
-                    Dim sql As String = "INSERT INTO iwadmin.[user] VALUES('" + name + "','" + email + "','" + phoneNo + "'); SELECT @@IDENTITY; "
-                    Dim cmdSql As New SqlCommand(sql, Conn)
+                    Dim sql As String = "INSERT INTO iwadmin.[user] VALUES(@name,@email,@phoneNo); SELECT @@IDENTITY; "
+                    Dim sqlcmd As New SqlCommand(sql, Conn)
+                    sqlcmd.Parameters.AddWithValue("@name", name)
+                    sqlcmd.Parameters.AddWithValue("@email", email)
+                    sqlcmd.Parameters.AddWithValue("@phoneNo", phoneNo)
                     If Conn.State <> ConnectionState.Open Then
                         Conn.Open()
                     End If
-                    id = CType(cmdSql.ExecuteScalar(), Integer)
+                    id = CType(sqlcmd.ExecuteScalar(), Integer)
                     Conn.Close()
                 Catch Ex As Exception
                 Finally
@@ -45,6 +48,27 @@ Namespace IST
             End If
             Return id
         End Function
+
+        Public Shared Function UpdateUser(ByVal id As Integer, ByVal name As String, ByVal email As String, ByVal phoneNo As String) As Boolean
+            Dim success As Boolean = True
+            Try
+                Dim updateSql As String = "UPDATE iwadmin.[user] SET name=@name, email = @email, phoneNo=@phoneNo WHERE id = " & id
+                Dim sqlcmd As New SqlCommand(updateSql, Conn)
+                sqlcmd.Parameters.AddWithValue("@name", name)
+                sqlcmd.Parameters.AddWithValue("@email", email)
+                sqlcmd.Parameters.AddWithValue("@phoneNo", phoneNo)
+                If Conn.State <> ConnectionState.Open Then
+                    Conn.Open()
+                End If
+                sqlcmd.ExecuteNonQuery()
+            Catch Ex As Exception
+                success = False
+            Finally
+                Conn.Close()
+            End Try
+            Return success
+        End Function
+
     End Class
 
 End Namespace
