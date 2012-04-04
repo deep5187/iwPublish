@@ -23,7 +23,9 @@ Namespace admin
        
             Dim result As String = Nothing
             Dim hmac = New HMACSHA256(Encoding.ASCII.GetBytes(key))
-            
+            If hash = Nothing Then
+                hash = ""
+            End If
             Dim byteText As Byte() = Encoding.ASCII.GetBytes(name + email + phoneNo)
             
             Dim hashValue As Byte() = hmac.ComputeHash(byteText)
@@ -50,8 +52,10 @@ Namespace admin
             Dim d As New Dictionary(Of String, Object)
             Dim result As String = Nothing
             Dim hmac = New HMACSHA256(Encoding.ASCII.GetBytes(key))
-            
-            Dim byteText As Byte() = Encoding.ASCII.GetBytes(id + name + email + phoneNo)
+            If hash = Nothing Then
+                hash = ""
+            End If
+            Dim byteText As Byte() = Encoding.ASCII.GetBytes(Convert.ToString(id) + name + email + phoneNo)
             
             Dim hashValue As Byte() = hmac.ComputeHash(byteText)
             
