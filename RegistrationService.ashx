@@ -20,58 +20,77 @@ Namespace admin
         <JsonRpcMethod("registerUser")> _
         Public Function RegisterUser(ByVal name As String, ByVal email As String,ByVal phoneNo As String, ByVal hash As String) As Dictionary(Of String, Object)
             Dim d As New Dictionary(Of String, Object)
-       
-            Dim result As String = Nothing
-            Dim hmac = New HMACSHA256(Encoding.ASCII.GetBytes(key))
-            If hash = Nothing Then
-                hash = ""
-            End If
-            Dim byteText As Byte() = Encoding.ASCII.GetBytes(name + email + phoneNo)
+            Try
+                Dim result As String = Nothing
+                Dim hmac = New HMACSHA256(Encoding.ASCII.GetBytes(key))
+                If hash = Nothing Then
+                    hash = ""
+                End If
+                If phoneNo = Nothing Then
+                    phoneNo = ""
+                End If
+                Dim byteText As Byte() = Encoding.ASCII.GetBytes(name + email + phoneNo)
             
-            Dim hashValue As Byte() = hmac.ComputeHash(byteText)
+                Dim hashValue As Byte() = hmac.ComputeHash(byteText)
             
-            result = Convert.ToBase64String(hashValue)
+                result = Convert.ToBase64String(hashValue)
 
-            Dim id As Integer = -1
-            If result.Trim().Equals(hash.Trim()) Then
-                id = IST.DataAccess.CreateOrReturnUser(name, email, phoneNo)
-                d.Add("error", DBNull.Value)
-                d.Add("result", id)
-            Else
-                d.Add("error", 1001)
-                d.Add("result", id)
-            End If
-            d.add("hash",result)
-            d.Add("jsonrpc", "2.0")          
-            d.Add("id", 0)
+                Dim id As Integer = -1
+                If result.Trim().Equals(hash.Trim()) Then
+                    id = IST.DataAccess.CreateOrReturnUser(name, email, phoneNo)
+                    d.Add("error", DBNull.Value)
+                    d.Add("result", id)
+                Else
+                    d.Add("error", 1001)
+                    d.Add("result", id)
+                End If
+                d.Add("hash", result)
+                d.Add("jsonrpc", "2.0")
+                d.Add("id", 0)
+            Catch Ex As Exception
+                d.Add("error", 1002)
+                d.Add("result", Ex.Message)
+                d.Add("jsonrpc", "2.0")
+                d.Add("id", 0)
+            End Try
             
             Return d
         End Function
         <JsonRpcMethod("updateUser")> _
         Public Function UpdateUser(ByVal id As Integer, ByVal name As String, ByVal email As String, ByVal phoneNo As String, ByVal hash As String) As Dictionary(Of String, Object)
             Dim d As New Dictionary(Of String, Object)
-            Dim result As String = Nothing
-            Dim hmac = New HMACSHA256(Encoding.ASCII.GetBytes(key))
-            If hash = Nothing Then
-                hash = ""
-            End If
-            Dim byteText As Byte() = Encoding.ASCII.GetBytes(Convert.ToString(id) + name + email + phoneNo)
+            Try
+                Dim result As String = Nothing
+                Dim hmac = New HMACSHA256(Encoding.ASCII.GetBytes(key))
+                If hash = Nothing Then
+                    hash = ""
+                End If
+                If phoneNo = Nothing Then
+                    phoneNo=""
+                End If
+                Dim byteText As Byte() = Encoding.ASCII.GetBytes(Convert.ToString(id) + name + email + phoneNo)
             
-            Dim hashValue As Byte() = hmac.ComputeHash(byteText)
+                Dim hashValue As Byte() = hmac.ComputeHash(byteText)
             
-            result = Convert.ToBase64String(hashValue)
-            Dim success As Boolean = False
-            If result.Trim().Equals(hash.Trim()) Then
-                success = IST.DataAccess.UpdateUser(id, name, email, phoneNo)
-                d.Add("error", DBNull.Value)
-                d.Add("result", success)
-            Else
-                d.Add("error", 1001)
-                d.Add("result", success)
-            End If
-            d.Add("hash", result)
-            d.Add("jsonrpc", "2.0")
-            d.Add("id", 0)          
+                result = Convert.ToBase64String(hashValue)
+                Dim success As Boolean = False
+                If result.Trim().Equals(hash.Trim()) Then
+                    success = IST.DataAccess.UpdateUser(id, name, email, phoneNo)
+                    d.Add("error", DBNull.Value)
+                    d.Add("result", success)
+                Else
+                    d.Add("error", 1001)
+                    d.Add("result", success)
+                End If
+                d.Add("hash", result)
+                d.Add("jsonrpc", "2.0")
+                d.Add("id", 0)
+            Catch Ex As Exception
+                d.Add("error", 1002)
+                d.Add("result", Ex.Message)
+                d.Add("jsonrpc", "2.0")
+                d.Add("id", 0)
+            End Try
             Return d
         End Function
     End Class

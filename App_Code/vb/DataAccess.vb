@@ -24,7 +24,7 @@ Namespace IST
         End Function
 
         Public Shared Function CreateOrReturnUser(ByVal name As String, ByVal email As String, ByVal phoneNo As String) As Integer
-            Dim searchUserSql As String = "SELECT id FROM iwadmin.[user] WHERE name = '" + name + "' and email LIKE '" + email + "'"
+            Dim searchUserSql As String = "SELECT id FROM iwadmin.[user] WHERE LOWER(name) = '" + name.Trim().ToLower() + "' and email LIKE '" + email + "'"
             Dim id As Integer = -1
             Dim dtb As DataTable = GetDataTable(searchUserSql)
             If dtb.Rows.Count > 0 Then
@@ -35,13 +35,18 @@ Namespace IST
                     Dim sqlcmd As New SqlCommand(sql, Conn)
                     sqlcmd.Parameters.AddWithValue("@name", name)
                     sqlcmd.Parameters.AddWithValue("@email", email)
-                    sqlcmd.Parameters.AddWithValue("@phoneNo", phoneNo)
+                    If phoneNo = "" Then
+                        sqlcmd.Parameters.AddWithValue("@email", DBNull.Value)
+                    Else
+                        sqlcmd.Parameters.AddWithValue("@email", email)
+                    End If
                     If Conn.State <> ConnectionState.Open Then
                         Conn.Open()
                     End If
                     id = CType(sqlcmd.ExecuteScalar(), Integer)
                     Conn.Close()
                 Catch Ex As Exception
+                    Throw Ex
                 Finally
                     Conn.Close()
                 End Try
@@ -55,7 +60,11 @@ Namespace IST
                 Dim updateSql As String = "UPDATE iwadmin.[user] SET name=@name, email = @email, phoneNo=@phoneNo WHERE id = " & id
                 Dim sqlcmd As New SqlCommand(updateSql, Conn)
                 sqlcmd.Parameters.AddWithValue("@name", name)
-                sqlcmd.Parameters.AddWithValue("@email", email)
+                If phoneNo = "" Then
+                    sqlcmd.Parameters.AddWithValue("@email", DBNull.Value)
+                Else
+                    sqlcmd.Parameters.AddWithValue("@email", email)
+                End If
                 sqlcmd.Parameters.AddWithValue("@phoneNo", phoneNo)
                 If Conn.State <> ConnectionState.Open Then
                     Conn.Open()
@@ -63,6 +72,7 @@ Namespace IST
                 sqlcmd.ExecuteNonQuery()
             Catch Ex As Exception
                 success = False
+                Throw Ex
             Finally
                 Conn.Close()
             End Try
