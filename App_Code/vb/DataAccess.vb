@@ -34,12 +34,12 @@ Namespace IST
                     Dim sql As String = "INSERT INTO iwadmin.[user] VALUES(@name,@email,@phoneNo); SELECT @@IDENTITY; "
                     Dim sqlcmd As New SqlCommand(sql, Conn)
                     sqlcmd.Parameters.AddWithValue("@name", name)
-                    sqlcmd.Parameters.AddWithValue("@email", email)
                     If phoneNo = "" Then
-                        sqlcmd.Parameters.AddWithValue("@email", DBNull.Value)
+                        sqlcmd.Parameters.AddWithValue("@phoneNo", DBNull.Value)
                     Else
-                        sqlcmd.Parameters.AddWithValue("@email", email)
+                        sqlcmd.Parameters.AddWithValue("@phoneNo", phoneNo)
                     End If
+                    sqlcmd.Parameters.AddWithValue("@email", email)
                     If Conn.State <> ConnectionState.Open Then
                         Conn.Open()
                     End If
@@ -61,11 +61,11 @@ Namespace IST
                 Dim sqlcmd As New SqlCommand(updateSql, Conn)
                 sqlcmd.Parameters.AddWithValue("@name", name)
                 If phoneNo = "" Then
-                    sqlcmd.Parameters.AddWithValue("@email", DBNull.Value)
+                    sqlcmd.Parameters.AddWithValue("@phoneNo", DBNull.Value)
                 Else
-                    sqlcmd.Parameters.AddWithValue("@email", email)
+                    sqlcmd.Parameters.AddWithValue("@phoneNo", phoneNo)
                 End If
-                sqlcmd.Parameters.AddWithValue("@phoneNo", phoneNo)
+                sqlcmd.Parameters.AddWithValue("@email", email)
                 If Conn.State <> ConnectionState.Open Then
                     Conn.Open()
                 End If
