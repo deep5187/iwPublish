@@ -40,16 +40,19 @@ Namespace admin
                     id = IST.DataAccess.CreateOrReturnUser(name, email, phoneNo)
                     d.Add("error", DBNull.Value)
                     d.Add("result", id)
+                    d.Add("msg", "User registered succesfully")
                 Else
                     d.Add("error", 1001)
                     d.Add("result", id)
+                    d.Add("msg", "Security breach. Hash did not match.")
                 End If
                 d.Add("hash", result)
                 d.Add("jsonrpc", "2.0")
                 d.Add("id", 0)
             Catch Ex As Exception
                 d.Add("error", 1002)
-                d.Add("result", Ex.Message)
+                d.Add("result", -1)
+                d.Add("msg",Ex.Message)
                 d.Add("jsonrpc", "2.0")
                 d.Add("id", 0)
             End Try
@@ -78,16 +81,19 @@ Namespace admin
                     success = IST.DataAccess.UpdateUser(id, name, email, phoneNo)
                     d.Add("error", DBNull.Value)
                     d.Add("result", success)
+                    d.Add("msg", "User updated succesfully")
                 Else
                     d.Add("error", 1001)
                     d.Add("result", success)
+                    d.Add("msg", "Security breach. Hash did not match.")
                 End If
                 d.Add("hash", result)
                 d.Add("jsonrpc", "2.0")
                 d.Add("id", 0)
             Catch Ex As Exception
                 d.Add("error", 1002)
-                d.Add("result", Ex.Message)
+                d.Add("result", False)
+                d.Add("msg",Ex.Message)
                 d.Add("jsonrpc", "2.0")
                 d.Add("id", 0)
             End Try
