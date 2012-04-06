@@ -46,7 +46,6 @@ Namespace admin
                     d.Add("result", id)
                     d.Add("msg", "Security breach. Hash did not match.")
                 End If
-                d.Add("hash", result)
                 d.Add("jsonrpc", "2.0")
                 d.Add("id", 0)
             Catch Ex As Exception
@@ -87,7 +86,6 @@ Namespace admin
                     d.Add("result", success)
                     d.Add("msg", "Security breach. Hash did not match.")
                 End If
-                d.Add("hash", result)
                 d.Add("jsonrpc", "2.0")
                 d.Add("id", 0)
             Catch Ex As Exception
