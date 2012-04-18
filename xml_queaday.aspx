@@ -33,7 +33,7 @@ Sub Page_Load()
                 wrt.WriteEndElement() 'instruction
             End If
             wrt.WriteStartElement("quetext")
-            wrt.WriteCData(dr("q_text").ToString())
+            wrt.WriteCData(HttpUtility.HtmlDecode(dr("q_text").ToString()))
             wrt.WriteEndElement() 'quetext
             If Convert.IsDBNull(dr("q_diagram")) Then
                 wrt.WriteElementString("diagram", "")
@@ -47,7 +47,18 @@ Sub Page_Load()
                 End If
                 wrt.WriteElementString("queimagename",dr("q_diagram").ToString.substring(0,dr("q_diagram").ToString.LastIndexOf(".")))
             End If
-            
+            If Convert.IsDBNull(dr("q_soldiagram")) Then
+                wrt.WriteElementString("soldiagram", "")
+                wrt.WriteElementString("quesolimagename", "")
+            Else
+                If Request.IsLocal Then
+                
+                    wrt.WriteElementString("soldiagram", "http://" & Request.Url.Authority & "/iwPublish/files/images/" & dr("q_soldiagram"))
+                Else
+                    wrt.WriteElementString("soldiagram", "http://" & Request.Url.Authority & "/files/images/" & dr("q_soldiagram"))
+                End If
+                wrt.WriteElementString("quesolimagename", dr("q_soldiagram").ToString.Substring(0, dr("q_soldiagram").ToString.LastIndexOf(".")))
+            End If
             Dim dtbOption As DataTable = IST.DataAccess.GetDataTable("SELECT opt_text,opt_correct FROM question q JOIN [option] o ON q.q_id = o.q_id WHERE q.q_id = " & dr("q_id"))
             wrt.WriteStartElement("answer")
             For Each drOpt As DataRow In dtbOption.Rows
@@ -62,11 +73,11 @@ Sub Page_Load()
                 wrt.WriteElementString("hint","")
             Else
                 wrt.WriteStartElement("hint")
-                wrt.WriteCData(dr("q_hint").ToString())
+                wrt.WriteCData(HttpUtility.HtmlDecode(dr("q_hint").ToString()))
                 wrt.WriteEndElement() 'hint
             End If
             wrt.WriteStartElement("solution")
-            Wrt.WriteCData(dr("q_solution").toString())
+            Wrt.WriteCData(HttpUtility.HtmlDecode(dr("q_solution").toString()))
             wrt.WriteEndElement() 'solution
             wrt.WriteEndElement() 'question
         Next

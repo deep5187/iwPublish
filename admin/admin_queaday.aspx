@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="VB" MasterPageFile="admin.master"  %>
+﻿<%@ Page Title="" Language="VB" MasterPageFile="admin.master"  ValidateRequest="false"%>
 <%@ Import Namespace="System.IO" %>
 <%@ Register Assembly="CKEditor.NET" Namespace="CKEditor.NET" TagPrefix="CKEditor" %>
 <%@ Import Namespace="System.Data" %>
@@ -58,7 +58,9 @@
         txtQueHint.Text=""
         txtQueInstruction.Text=""
         imgDiagram.ImageUrl="../images/noimage.png"
-        imgDiagramUrl.Value=""
+        imgDiagramUrl.Value = ""
+        imgSolDiagram.ImageUrl = "../images/noimage.png"
+        imgSolDiagramUrl.Value = ""
         txtDate.Text = DateTime.Today
         cbxHidden.Checked = True
         cbxlCats.ClearSelection()
@@ -74,19 +76,32 @@
         litPageHeader.Text="Questions"
         mvwMain.SetActiveView(vwGrid)
     End Sub
-    
+    Sub btnDeleteDia_OnClick(ByVal s As Object, ByVal e As EventArgs)
+        If imgUpload.HasFile Then
+            If File.Exists(imgUpload.FileName) Then
+                File.Delete(imgUpload.FileName)
+            End If
+        End If
+    End Sub
+    Sub btnDeleteSolDia_OnClick(ByVal s As Object, ByVal e As EventArgs)
+        If imgSolUpload.HasFile Then
+            If File.Exists(imgSolUpload.FileName) Then
+                File.Delete(imgSolUpload.FileName)
+            End If
+        End If
+    End Sub
     Sub btnSubmit_Click(ByVal s As Object, ByVal e As EventArgs)
     Dim flag As Char = "n" 
         If Page.IsValid Then
             Dim sql As String
             
             If Len(ViewState("idVal")) = 0 Then
-                sql = "INSERT INTO question(q_name, q_text,q_hint,q_solution,q_instruction, q_date, q_hidden,q_diagram, admin_id) VALUES" & _
-                              "(@q_name, @q_text,@q_hint,@q_solution,@q_instruction, @q_date, @q_hidden,@q_diagram, @admin_id); SELECT @@IDENTITY;"
+                sql = "INSERT INTO question(q_name, q_text,q_hint,q_solution,q_instruction, q_date, q_hidden,q_diagram,q_soldiagram, admin_id) VALUES" & _
+                              "(@q_name, @q_text,@q_hint,@q_solution,@q_instruction, @q_date, @q_hidden,@q_diagram,@q_soldiagram, @admin_id); SELECT @@IDENTITY;"
                 flag = "i"
             Else
                 sql = "UPDATE question SET q_name=@q_name, q_text=@q_text,q_instruction=@q_instruction,q_hint=@q_hint, q_solution=@q_solution," & _
-                      "q_date=@q_date, q_hidden=@q_hidden,q_diagram=@q_diagram, admin_id = @admin_id WHERE q_id = " & ViewState("idVal")
+                      "q_date=@q_date, q_hidden=@q_hidden,q_diagram=@q_diagram,q_soldiagram=@q_soldiagram, admin_id = @admin_id WHERE q_id = " & ViewState("idVal")
                 flag = "u"
             End If
             Dim cmdSql As New SqlCommand(sql, conn)
@@ -94,33 +109,72 @@
             If imgUpload.HasFile Then 
                 Dim charsToTrim() As Char = {"*", " ", "\"}
                 Dim guid As Guid = System.Guid.NewGuid()
-                imgUpload.SaveAs(Server.MapPath(VirtualFileRoot & "/") & guid.ToString() & imgUpload.FileName.Trim(charsToTrim))
-                cmdSql.Parameters.AddWithValue("@q_diagram", guid.ToString() & imgUpload.FileName.Trim(charsToTrim))
+                imgUpload.SaveAs(Server.MapPath(VirtualFileRoot & "/") & guid.ToString() & imgUpload.FileName.Trim(charsToTrim).Replace(" ",""))
+                cmdSql.Parameters.AddWithValue("@q_diagram", guid.ToString() & imgUpload.FileName.Trim(charsToTrim).Replace(" ", ""))
                 'Deleting the old file once we have uploaded the new file
-                If imgDiagramUrl.Value IsNot "" Then
-                    If File.Exists(Server.MapPath(VirtualFileRoot & "/") & imgDiagramUrl.Value) Then
-                        File.Delete(Server.MapPath(VirtualFileRoot & "/") & imgDiagramUrl.Value)
+                Dim url As String = imgDiagramUrl.Value
+                If url IsNot "" Then
+                    If File.Exists(Server.MapPath(VirtualFileRoot & "/") & url) Then
+                        File.Delete(Server.MapPath(VirtualFileRoot & "/") & url)
                     End If
                 End If
+                'delete current image if check box true
+            ElseIf chkDiagramDel.Checked Then
+                Dim url As String = imgDiagramUrl.Value
+                If File.Exists(Server.MapPath(VirtualFileRoot & "/") & url) Then
+                    File.Delete(Server.MapPath(VirtualFileRoot & "/") & url)
+                End If
+                cmdSql.Parameters.AddWithValue("@q_diagram", DBNull.Value)
             Else
-                'if now new file specified then restore the previous value
-                If imgDiagramUrl.Value = "" Then
+                'if no new file specified then restore the previous value
+                Dim url As String = imgDiagramUrl.Value
+                If url = "" Then
                     cmdSql.Parameters.AddWithValue("@q_diagram", DBNull.Value)
                 Else
-                    cmdSql.Parameters.AddWithValue("@q_diagram", imgDiagramUrl.Value)
+                    cmdSql.Parameters.AddWithValue("@q_diagram", url)
                 End If
             End If
-            cmdSql.Parameters.AddWithValue("@q_name", txtQueName.Text)
-            
-            cmdSql.Parameters.AddWithValue("@q_text", txtQueText.Text)
-            cmdSql.Parameters.AddWithValue("@q_date", txtDate.Text)
-            cmdSql.Parameters.AddWithValue("@q_solution",txtQueSolution.Text)
-            If txtQueHint.Text <> ""
-                cmdSql.Parameters.AddWithValue("@q_hint",txtQueHint.Text)
-            Else 
-                cmdSql.Parameters.AddWithValue("@q_hint",DBNull.Value)
+            If imgSolUpload.HasFile Then
+                Dim charsToTrim() As Char = {"*", " ", "\"}
+                Dim guid As Guid = System.Guid.NewGuid()
+                imgSolUpload.SaveAs(Server.MapPath(VirtualFileRoot & "/") & guid.ToString() & imgSolUpload.FileName.Trim(charsToTrim).Replace(" ", ""))
+                cmdSql.Parameters.AddWithValue("@q_soldiagram", guid.ToString() & imgSolUpload.FileName.Trim(charsToTrim).Replace(" ",""))
+                'Deleting the old file once we have uploaded the new file
+                Dim url As String = imgSolDiagramUrl.Value
+                If url IsNot "" Then
+                    If File.Exists(Server.MapPath(VirtualFileRoot & "/") & url) Then
+                        File.Delete(Server.MapPath(VirtualFileRoot & "/") & url)
+                    End If
+                End If
+            'delete current image if check box true
+            ElseIf chkSolDiagramDel.Checked Then
+                Dim url As String = imgSolDiagramUrl.Value
+                If File.Exists(Server.MapPath(VirtualFileRoot & "/") & url) Then
+                    File.Delete(Server.MapPath(VirtualFileRoot & "/") & url)
+                End If
+                cmdSql.Parameters.AddWithValue("@q_soldiagram", DBNull.Value)
+            Else
+                'if now new file specified then restore the previous value
+                Dim url As String = imgSolDiagramUrl.Value
+                If url = "" Then
+                    cmdSql.Parameters.AddWithValue("@q_soldiagram", DBNull.Value)
+                Else
+                    cmdSql.Parameters.AddWithValue("@q_soldiagram", url)
+                End If
             End If
-            cmdSql.Parameters.AddWithValue("@q_instruction",txtQueInstruction.text)
+            
+            
+            cmdSql.Parameters.AddWithValue("@q_name", HttpUtility.HtmlEncode(txtQueName.Text))
+            
+            cmdSql.Parameters.AddWithValue("@q_text", HttpUtility.HtmlEncode(txtQueText.Text))
+            cmdSql.Parameters.AddWithValue("@q_date", txtDate.Text)
+            cmdSql.Parameters.AddWithValue("@q_solution",HttpUtility.HtmlEncode(txtQueSolution.Text))
+            If txtQueHint.Text <> "" Then
+                cmdSql.Parameters.AddWithValue("@q_hint", HttpUtility.HtmlEncode(txtQueHint.Text))
+            Else
+                cmdSql.Parameters.AddWithValue("@q_hint", DBNull.Value)
+            End If
+            cmdSql.Parameters.AddWithValue("@q_instruction", HttpUtility.HtmlEncode(txtQueInstruction.Text))
             If cbxHidden.Checked Then
                 cmdSql.Parameters.AddWithValue("@q_hidden", 1)
             Else
@@ -128,7 +182,7 @@
             End If
             
             
-            cmdSql.Parameters.AddWithValue("@admin_id",IST.DataAccess.GetAdminId(HttpContext.Current.User.Identity.Name))
+            cmdSql.Parameters.AddWithValue("@admin_id", IST.DataAccess.GetAdminId(HttpContext.Current.User.Identity.Name))
             
             conn.Open()
 
@@ -175,7 +229,7 @@
         End Select
     End Sub
     Sub EditForm(ByVal idVal As Integer)
-       Dim sql As String = "SELECT q_id, q_name, q_text,isnull(q_hint,'') as q_hint, isnull(q_solution,'') as q_solution,isnull(q_instruction,'') as q_instruction, CONVERT(varchar,q_date,101) as q_date, q_hidden,q_diagram, admin_id FROM question WHERE q_id = " & idVal
+       Dim sql As String = "SELECT q_id, q_name, q_text,isnull(q_hint,'') as q_hint, isnull(q_solution,'') as q_solution,isnull(q_instruction,'') as q_instruction, CONVERT(varchar,q_date,101) as q_date, q_hidden,q_diagram,q_soldiagram, admin_id FROM question WHERE q_id = " & idVal
        Dim dtb As DataTable = IST.DataAccess.GetDataTable(sql)
         
         If dtb.Rows.Count > 0 Then
@@ -183,10 +237,13 @@
             lblAdmin.Text = HttpContext.Current.User.Identity.Name
             txtQueName.Text = dr("q_name").ToString
             txtQueText.Text = dr("q_text").ToString
-            txtQueSolution.Text = dr("q_solution").ToString
+            txtQueSolution.Text = HttpUtility.HtmlDecode(dr("q_solution").ToString)
             txtQueHint.Text= dr("q_hint").ToString
             txtQueInstruction.Text = dr("q_instruction").ToString
             txtDate.Text = dr("q_date").ToString
+            chkSolDiagramDel.Checked = False
+            chkDiagramDel.Checked = False
+            
             If Not Convert.IsDBNull(dr("q_hidden"))
                 cbxHidden.Checked = dr("q_hidden")
             Else
@@ -205,6 +262,20 @@
             Else
                 imgDiagram.ImageUrl = "../images/noimage.png"
                 imgDiagramUrl.Value=""
+                
+            End If
+            
+            If Not Convert.IsDBNull(dr("q_soldiagram")) Then
+                If Request.IsLocal Then
+                    imgSolDiagram.ImageUrl = "http://" & Request.Url.Authority & "/iwPublish/files/images/" & dr("q_soldiagram").ToString
+                Else
+                    imgSolDiagram.ImageUrl = "http://" & Request.Url.Authority & "/files/images/" & dr("q_soldiagram").ToString
+                End If
+                
+                imgSolDiagramUrl.Value = dr("q_soldiagram").ToString
+            Else
+                imgSolDiagram.ImageUrl = "../images/noimage.png"
+                imgSolDiagramUrl.Value = ""
                 
             End If
             cbxlCats.ClearSelection()
@@ -423,7 +494,7 @@
                     <label for="txtQueHint" class="control-label">
                         Hint</label>
                     <div class="controls">
-                        <CKEditor:CKEditorControl ID="txtQueHint" runat="server" TextMode="MultiLine" Height="100" Width="90%" ClientIDMode="Static"></CKEditor:CKEditorControl>           
+                        <asp:TextBox ID="txtQueHint" runat="server" TextMode="MultiLine" Height="100" Width="90%" ClientIDMode="Static"></asp:TextBox>           
                     </div>
                 </div>
                 <br />
@@ -432,7 +503,7 @@
                     <label for="txtQueSolution" class="control-label">
                         Solution</label>
                     <div class="controls">
-                        <CKEditor:CKEditorControl ID="txtQueSolution" runat="server" TextMode="MultiLine" Height="200" Width="90%" ClientIDMode="Static"></CKEditor:CKEditorControl>
+                        <asp:TextBox ID="txtQueSolution" runat="server" TextMode="MultiLine" Height="200" Width="90%" ClientIDMode="Static"></asp:TextBox>
                         <asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="txtQueSolution"
                         ID="retxtQueSolution" runat="server"></asp:RequiredFieldValidator>
                       
@@ -440,16 +511,33 @@
                     
                 </div>
                 <div class="control-group">
-                <label for="imgUpload" class="control-label">
-                    Image
+                <label for="diagram" class="control-label">
+                    Question Image
                 </label>
-                <div class="controls"> 
+                <div id="diagram" class="controls"> 
+                    <p class="help-block">Current Image</p>
                     <asp:Image ID="imgDiagram" ClientIDMode="Static" runat="server" Height="200" Width="200" ImageUrl="../images/noimage.png"  AlternateText="Diagram"/>
-                    <asp:HiddenField ID="imgDiagramUrl" runat="server" /> 
-                    <p class="help-block">Current Diagram</p>
+                    <asp:HiddenField ID="imgDiagramUrl" runat="server" />
+                    <br />
+                    <asp:CheckBox ID="chkDiagramDel" ClientIDMode="Static" runat="server" Text="Delete"/>
                     <br />
                     <asp:FileUpload ID="imgUpload"   runat="server"/>
-                    <p class="help-block">Upload New Diagram</p>
+                    <p class="help-block">Upload New</p>
+                </div>
+                </div>
+                <div class="control-group">
+                <label for="solutionDiagram" class="control-label">
+                    Solution Image
+                </label>
+                <div id="solutionDiagram" class="controls"> 
+                    <p class="help-block">Current Image</p>
+                    <asp:Image ID="imgSolDiagram" ClientIDMode="Static" runat="server" Height="200" Width="200" ImageUrl="../images/noimage.png"  AlternateText="Diagram"/>
+                    <asp:HiddenField ID="imgSolDiagramUrl" runat="server" /> 
+                    <br />
+                    <asp:CheckBox ID="chkSolDiagramDel" ClientIDMode="Static" runat="server" Text="Delete" />     
+                    <br />
+                    <asp:FileUpload ID="imgSolUpload"   runat="server"/>
+                    <p class="help-block">Upload New</p>
                 </div>
                 </div>
                 <div class="control-group">
