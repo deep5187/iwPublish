@@ -168,7 +168,12 @@
             
             cmdSql.Parameters.AddWithValue("@q_text", HttpUtility.HtmlEncode(txtQueText.Text))
             cmdSql.Parameters.AddWithValue("@q_date", txtDate.Text)
-            cmdSql.Parameters.AddWithValue("@q_solution",HttpUtility.HtmlEncode(txtQueSolution.Text))
+           
+            If txtQueSolution.Text <> "" Then
+                cmdSql.Parameters.AddWithValue("@q_solution", HttpUtility.HtmlEncode(txtQueSolution.Text))
+            Else
+                cmdSql.Parameters.AddWithValue("@q_solution", DBNull.Value)
+            End If
             If txtQueHint.Text <> "" Then
                 cmdSql.Parameters.AddWithValue("@q_hint", HttpUtility.HtmlEncode(txtQueHint.Text))
             Else
@@ -504,8 +509,6 @@
                         Solution</label>
                     <div class="controls">
                         <asp:TextBox ID="txtQueSolution" runat="server" TextMode="MultiLine" Height="200" Width="90%" ClientIDMode="Static"></asp:TextBox>
-                        <asp:RequiredFieldValidator ErrorMessage="Required" ControlToValidate="txtQueSolution"
-                        ID="retxtQueSolution" runat="server"></asp:RequiredFieldValidator>
                       
                     </div>
                     
