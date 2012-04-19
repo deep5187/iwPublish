@@ -12,6 +12,7 @@
                     .Items.Insert(3, New ListItem("Topper's Say","Toppersay"))
                     .Items.Insert(4, New ListItem("Categories", "Categories"))
                     .Items.Insert(5, New ListItem("Admin", "Admin"))
+                    .Items.Insert(5, New ListItem("Users", "Users"))
                 End With
             End If
         Else
@@ -33,6 +34,8 @@
                 Response.Redirect("../admin/admin_topsay.aspx")
             Case "Categories"
                 Response.Redirect("../admin/admin_categories.aspx")
+            Case "Users"
+                Response.Redirect("../admin/users.aspx")
         End Select
     End Sub
 
