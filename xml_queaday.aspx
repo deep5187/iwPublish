@@ -29,7 +29,7 @@ Sub Page_Load()
                 wrt.WriteElementString("instruction","")
             Else
                 wrt.WriteStartElement("instruction")
-                wrt.WriteCData(dr("q_instruction").ToString())
+                wrt.WriteCData(HttpUtility.HtmlDecode(dr("q_instruction").ToString()))
                 wrt.WriteEndElement() 'instruction
             End If
             wrt.WriteStartElement("quetext")
