@@ -76,9 +76,14 @@ Sub Page_Load()
                 wrt.WriteCData(HttpUtility.HtmlDecode(dr("q_hint").ToString()))
                 wrt.WriteEndElement() 'hint
             End If
-            wrt.WriteStartElement("solution")
-            Wrt.WriteCData(HttpUtility.HtmlDecode(dr("q_solution").toString()))
-            wrt.WriteEndElement() 'solution
+            If Not dr("q_solhidden") Then
+                wrt.WriteStartElement("solution")
+                wrt.WriteCData(HttpUtility.HtmlDecode(dr("q_solution").ToString()))
+                wrt.WriteEndElement() 'solution
+            Else
+                wrt.WriteElementString("solution", "")
+            End If
+            
             wrt.WriteEndElement() 'question
         Next
         

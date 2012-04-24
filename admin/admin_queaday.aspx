@@ -96,12 +96,12 @@
             Dim sql As String
             
             If Len(ViewState("idVal")) = 0 Then
-                sql = "INSERT INTO question(q_name, q_text,q_hint,q_solution,q_instruction, q_date, q_hidden,q_diagram,q_soldiagram, admin_id) VALUES" & _
-                              "(@q_name, @q_text,@q_hint,@q_solution,@q_instruction, @q_date, @q_hidden,@q_diagram,@q_soldiagram, @admin_id); SELECT @@IDENTITY;"
+                sql = "INSERT INTO question(q_name, q_text,q_hint,q_solution,q_instruction, q_date, q_hidden,q_diagram,q_soldiagram,q_solhidden, admin_id) VALUES" & _
+                              "(@q_name, @q_text,@q_hint,@q_solution,@q_instruction, @q_date, @q_hidden,@q_diagram,@q_soldiagram,@q_solhidden, @admin_id); SELECT @@IDENTITY;"
                 flag = "i"
             Else
                 sql = "UPDATE question SET q_name=@q_name, q_text=@q_text,q_instruction=@q_instruction,q_hint=@q_hint, q_solution=@q_solution," & _
-                      "q_date=@q_date, q_hidden=@q_hidden,q_diagram=@q_diagram,q_soldiagram=@q_soldiagram, admin_id = @admin_id WHERE q_id = " & ViewState("idVal")
+                      "q_date=@q_date, q_hidden=@q_hidden,q_diagram=@q_diagram,q_soldiagram=@q_soldiagram,q_solhidden= @q_solhidden, admin_id = @admin_id WHERE q_id = " & ViewState("idVal")
                 flag = "u"
             End If
             Dim cmdSql As New SqlCommand(sql, conn)
@@ -163,7 +163,6 @@
                 End If
             End If
             
-            
             cmdSql.Parameters.AddWithValue("@q_name", HttpUtility.HtmlEncode(txtQueName.Text))
             
             cmdSql.Parameters.AddWithValue("@q_text", HttpUtility.HtmlEncode(txtQueText.Text))
@@ -174,6 +173,8 @@
             Else
                 cmdSql.Parameters.AddWithValue("@q_solution", DBNull.Value)
             End If
+            
+            cmdSql.Parameters.AddWithValue("@q_solhidden", chkSolHidden.Checked)
             If txtQueHint.Text <> "" Then
                 cmdSql.Parameters.AddWithValue("@q_hint", HttpUtility.HtmlEncode(txtQueHint.Text))
             Else
@@ -234,7 +235,7 @@
         End Select
     End Sub
     Sub EditForm(ByVal idVal As Integer)
-       Dim sql As String = "SELECT q_id, q_name, q_text,isnull(q_hint,'') as q_hint, isnull(q_solution,'') as q_solution,isnull(q_instruction,'') as q_instruction, CONVERT(varchar,q_date,101) as q_date, q_hidden,q_diagram,q_soldiagram, admin_id FROM question WHERE q_id = " & idVal
+       Dim sql As String = "SELECT q_id, q_name, q_text,isnull(q_hint,'') as q_hint, isnull(q_solution,'') as q_solution,isnull(q_instruction,'') as q_instruction, CONVERT(varchar,q_date,101) as q_date, q_hidden,q_diagram,q_soldiagram,q_solhidden, admin_id FROM question WHERE q_id = " & idVal
        Dim dtb As DataTable = IST.DataAccess.GetDataTable(sql)
         
         If dtb.Rows.Count > 0 Then
@@ -248,8 +249,8 @@
             txtDate.Text = dr("q_date").ToString
             chkSolDiagramDel.Checked = False
             chkDiagramDel.Checked = False
-            
-            If Not Convert.IsDBNull(dr("q_hidden"))
+            chkSolHidden.Checked = dr("q_solhidden")
+            If Not Convert.IsDBNull(dr("q_hidden")) Then
                 cbxHidden.Checked = dr("q_hidden")
             Else
                 cbxHidden.Checked = false
@@ -512,6 +513,14 @@
                       
                     </div>
                     
+                </div>
+                <div class="control-group">
+                    <label for="chkSolHidden" class="control-label">
+                    Solution Hidden
+                    </label>
+                    <div class="controls">
+                        <asp:CheckBox ID="chkSolHidden" runat="server" ClientIDMode="Static" />
+                    </div>
                 </div>
                 <div class="control-group">
                 <label for="diagram" class="control-label">
