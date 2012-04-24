@@ -241,10 +241,10 @@
             Dim dr As DataRow = dtb.Rows(0)
             lblAdmin.Text = HttpContext.Current.User.Identity.Name
             txtQueName.Text = dr("q_name").ToString
-            txtQueText.Text = dr("q_text").ToString
+            txtQueText.Text = HttpUtility.HtmlDecode(dr("q_text").ToString)
             txtQueSolution.Text = HttpUtility.HtmlDecode(dr("q_solution").ToString)
-            txtQueHint.Text= dr("q_hint").ToString
-            txtQueInstruction.Text = dr("q_instruction").ToString
+            txtQueHint.Text= HttpUtility.HtmlDecode(dr("q_hint").ToString)
+            txtQueInstruction.Text = HttpUtility.HtmlDecode(dr("q_instruction").ToString)
             txtDate.Text = dr("q_date").ToString
             chkSolDiagramDel.Checked = False
             chkDiagramDel.Checked = False
