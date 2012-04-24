@@ -63,6 +63,7 @@
         imgSolDiagramUrl.Value = ""
         txtDate.Text = DateTime.Today
         cbxHidden.Checked = True
+        chkSolHidden.Checked = True
         cbxlCats.ClearSelection()
         ViewState("idVal") = ""
         lblAdmin.Text = HttpContext.Current.User.Identity.Name
