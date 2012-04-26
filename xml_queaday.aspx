@@ -81,7 +81,9 @@ Sub Page_Load()
                 wrt.WriteCData(HttpUtility.HtmlDecode(dr("q_solution").ToString()))
                 wrt.WriteEndElement() 'solution
             Else
-                wrt.WriteElementString("solution", "")
+                wrt.WriteStartElement("solution")
+                wrt.WriteCData("The Solution would be uploaded tommorrow. <br /> Alternatively you can view today's solution on <a href='https://www.facebook.com/CATappMobile'>https://www.facebook.com/CATappMobile</a>")
+                wrt.WriteEndElement() 'solution
             End If
             
             wrt.WriteEndElement() 'question
