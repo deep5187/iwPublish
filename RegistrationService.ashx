@@ -18,8 +18,9 @@ Namespace admin
             Return d
         End Function
         
+        'this method has to be phased out. keep this only till next android update
         <JsonRpcMethod("registerUser")> _
-        Public Function RegisterUser(ByVal name As String, ByVal email As String, ByVal phoneNo As String, ByVal hash As String, Optional ByVal platform As String = "android") As Dictionary(Of String, Object)
+        Public Function RegisterUser(ByVal name As String, ByVal email As String, ByVal phoneNo As String, ByVal hash As String, ByVal platform As String) As Dictionary(Of String, Object)
             Dim d As New Dictionary(Of String, Object)
             Try
                 Dim result As String = Nothing
@@ -30,7 +31,7 @@ Namespace admin
                 If phoneNo = Nothing Then
                     phoneNo = ""
                 End If
-                Dim byteText As Byte() = Encoding.ASCII.GetBytes(name + email + phoneNo)
+                Dim byteText As Byte() = Encoding.ASCII.GetBytes(name + email + phoneNo + platform)
             
                 Dim hashValue As Byte() = hmac.ComputeHash(byteText)
             
@@ -38,7 +39,7 @@ Namespace admin
 
                 Dim id As Integer = -1
                 If result.Trim().Equals(hash.Trim()) Then
-                    id = IST.DataAccess.CreateOrReturnUser(name, email, phoneNo,platform)
+                    id = IST.DataAccess.CreateOrReturnUser(name, email, phoneNo, platform)
                     d.Add("error", DBNull.Value)
                     d.Add("result", id)
                     d.Add("msg", "User registered succesfully")
@@ -69,7 +70,7 @@ Namespace admin
                     hash = ""
                 End If
                 If phoneNo = Nothing Then
-                    phoneNo=""
+                    phoneNo = ""
                 End If
                 Dim byteText As Byte() = Encoding.ASCII.GetBytes(Convert.ToString(id) + name + email + phoneNo)
             
@@ -92,7 +93,7 @@ Namespace admin
             Catch Ex As Exception
                 d.Add("error", 1002)
                 d.Add("result", False)
-                d.Add("msg",Ex.Message)
+                d.Add("msg", Ex.Message)
                 d.Add("jsonrpc", "2.0")
                 d.Add("id", 0)
             End Try
