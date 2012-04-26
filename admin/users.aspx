@@ -12,7 +12,7 @@
     Sub showlist()
         conn.ConnectionString = ConfigurationManager.ConnectionStrings("db").ConnectionString
         Dim userSql As String
-        userSql = " SELECT [name],[email],[phoneno],[regdate],[id] FROM [iwadmin].[user] ORDER BY [regdate] DESC, [id] DESC "
+        userSql = " SELECT [name],[email],[phoneno],[regdate],[id],[platform] FROM [iwadmin].[user] ORDER BY [regdate] DESC, [id] DESC "
         Dim cntUser = "SELECT COUNT(*) FROM [iwadmin].[user]"
         With dtGrd
             .DataSource = IST.DataAccess.GetDataTable(userSql)
@@ -39,6 +39,8 @@
                     <asp:BoundColumn DataField="phoneno" HeaderText="Phone No">
                     </asp:BoundColumn>
                     <asp:BoundColumn DataField="regdate" HeaderText="Registration Date">
+                    </asp:BoundColumn>
+                    <asp:BoundColumn DataField="platform" HeaderText="Platform">
                     </asp:BoundColumn>
                 </Columns>
             </asp:DataGrid>

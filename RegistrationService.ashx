@@ -16,9 +16,10 @@ Namespace admin
             d.Add("error", DBNull.Value)
             d.Add("id", 0)
             Return d
-		End Function
+        End Function
+        
         <JsonRpcMethod("registerUser")> _
-        Public Function RegisterUser(ByVal name As String, ByVal email As String,ByVal phoneNo As String, ByVal hash As String) As Dictionary(Of String, Object)
+        Public Function RegisterUser(ByVal name As String, ByVal email As String, ByVal phoneNo As String, ByVal hash As String, Optional ByVal platform As String = "android") As Dictionary(Of String, Object)
             Dim d As New Dictionary(Of String, Object)
             Try
                 Dim result As String = Nothing
@@ -37,7 +38,7 @@ Namespace admin
 
                 Dim id As Integer = -1
                 If result.Trim().Equals(hash.Trim()) Then
-                    id = IST.DataAccess.CreateOrReturnUser(name, email, phoneNo)
+                    id = IST.DataAccess.CreateOrReturnUser(name, email, phoneNo,platform)
                     d.Add("error", DBNull.Value)
                     d.Add("result", id)
                     d.Add("msg", "User registered succesfully")
@@ -51,7 +52,7 @@ Namespace admin
             Catch Ex As Exception
                 d.Add("error", 1002)
                 d.Add("result", -1)
-                d.Add("msg",Ex.Message)
+                d.Add("msg", Ex.Message)
                 d.Add("jsonrpc", "2.0")
                 d.Add("id", 0)
             End Try

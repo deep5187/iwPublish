@@ -23,7 +23,7 @@ Namespace IST
             Return adminId
         End Function
 
-        Public Shared Function CreateOrReturnUser(ByVal name As String, ByVal email As String, ByVal phoneNo As String) As Integer
+        Public Shared Function CreateOrReturnUser(ByVal name As String, ByVal email As String, ByVal phoneNo As String, ByVal platform As String) As Integer
             Dim searchUserSql As String = "SELECT id FROM iwadmin.[user] WHERE LOWER(name) = '" + name.Trim().ToLower() + "' and email LIKE '" + email + "'"
             Dim id As Integer = -1
             Dim dtb As DataTable = GetDataTable(searchUserSql)
@@ -31,7 +31,7 @@ Namespace IST
                 id = CInt(dtb.Rows(0)("id"))
             Else
                 Try
-                    Dim sql As String = "INSERT INTO iwadmin.[user] VALUES(@name,@email,@phoneNo,@regdate); SELECT @@IDENTITY; "
+                    Dim sql As String = "INSERT INTO iwadmin.[user](name,email,phoneNo,regdate,platform) VALUES(@name,@email,@phoneNo,@regdate,@platform); SELECT @@IDENTITY; "
                     Dim sqlcmd As New SqlCommand(sql, Conn)
                     sqlcmd.Parameters.AddWithValue("@name", name)
                     If phoneNo = "" Then
@@ -41,6 +41,7 @@ Namespace IST
                     End If
                     sqlcmd.Parameters.AddWithValue("@email", email)
                     sqlcmd.Parameters.AddWithValue("@regdate", DateTime.Now().ToString())
+                    sqlcmd.Parameters.AddWithValue("@platform", platform)
                     If Conn.State <> ConnectionState.Open Then
                         Conn.Open()
                     End If
