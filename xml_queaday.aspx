@@ -82,7 +82,7 @@ Sub Page_Load()
                 wrt.WriteEndElement() 'solution
             Else
                 wrt.WriteStartElement("solution")
-                wrt.WriteCData("The Solution would be uploaded tommorrow. <br /> Alternatively you can view today's solution on https://www.facebook.com/CATappMobile'>https://www.facebook.com/CATappMobile")
+                wrt.WriteCData("The Solution would be uploaded tommorrow. <br /> Alternatively you can view today's solution on <a href='https://www.facebook.com/CATappMobile'>https://www.facebook.com/CATappMobile</a>")
                 wrt.WriteEndElement() 'solution
             End If
             
