@@ -31,6 +31,7 @@ Namespace IST
                 id = CInt(dtb.Rows(0)("id"))
             Else
                 Try
+
                     Dim sql As String = "INSERT INTO iwadmin.[user](name,email,phoneNo,regdate,platform) VALUES(@name,@email,@phoneNo,@regdate,@platform); SELECT @@IDENTITY; "
                     Dim sqlcmd As New SqlCommand(sql, Conn)
                     sqlcmd.Parameters.AddWithValue("@name", name)
@@ -39,7 +40,12 @@ Namespace IST
                     Else
                         sqlcmd.Parameters.AddWithValue("@phoneNo", phoneNo)
                     End If
-                    sqlcmd.Parameters.AddWithValue("@email", email)
+                    If email = "" Then
+                        sqlcmd.Parameters.AddWithValue("@email", DBNull.Value)
+                    Else
+                        sqlcmd.Parameters.AddWithValue("@email", email)
+                    End If
+
                     sqlcmd.Parameters.AddWithValue("@regdate", DateTime.Now().ToString())
                     sqlcmd.Parameters.AddWithValue("@platform", platform)
                     If Conn.State <> ConnectionState.Open Then

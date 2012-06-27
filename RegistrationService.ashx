@@ -31,6 +31,7 @@ Namespace admin
                 If phoneNo = Nothing Then
                     phoneNo = ""
                 End If
+                
                 Dim byteText As Byte() = Encoding.ASCII.GetBytes(name + email + phoneNo + platform)
             
                 Dim hashValue As Byte() = hmac.ComputeHash(byteText)
@@ -39,6 +40,11 @@ Namespace admin
 
                 Dim id As Integer = -1
                 If result.Trim().Equals(hash.Trim()) Then
+                    'this is done to accomadate users who will not provide information on iphone 
+                    'date - 27/06/2012
+                    If name = Nothing Or name = "" Then
+                        name = "user" + DateTime.Now.ToString()
+                    End If
                     id = IST.DataAccess.CreateOrReturnUser(name, email, phoneNo, platform)
                     d.Add("error", DBNull.Value)
                     d.Add("result", id)
