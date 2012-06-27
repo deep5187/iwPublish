@@ -43,11 +43,12 @@ Namespace admin
                     'this is done to accomadate users who will not provide information on iphone 
                     'date - 27/06/2012
                     If name = Nothing Or name = "" Then
-                        name = "user" + DateTime.Now.ToString()
+                        name = "user" + DateTime.Now.ToString("0-MMddyy")
                     End If
                     id = IST.DataAccess.CreateOrReturnUser(name, email, phoneNo, platform)
                     d.Add("error", DBNull.Value)
                     d.Add("result", id)
+                    d.Add("name",name)
                     d.Add("msg", "User registered succesfully")
                 Else
                     d.Add("error", 1001)
