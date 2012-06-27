@@ -40,12 +40,8 @@ Namespace IST
                     Else
                         sqlcmd.Parameters.AddWithValue("@phoneNo", phoneNo)
                     End If
-                    If email = "" Then
-                        sqlcmd.Parameters.AddWithValue("@email", DBNull.Value)
-                    Else
-                        sqlcmd.Parameters.AddWithValue("@email", email)
-                    End If
-
+                    
+                    sqlcmd.Parameters.AddWithValue("@email", email)
                     sqlcmd.Parameters.AddWithValue("@regdate", DateTime.Now().ToString())
                     sqlcmd.Parameters.AddWithValue("@platform", platform)
                     If Conn.State <> ConnectionState.Open Then
