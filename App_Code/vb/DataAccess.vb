@@ -40,8 +40,12 @@ Namespace IST
                     Else
                         sqlcmd.Parameters.AddWithValue("@phoneNo", phoneNo)
                     End If
-                    
-                    sqlcmd.Parameters.AddWithValue("@email", email)
+                    If email = "" Then
+                        sqlcmd.Parameters.AddWithValue("@email", DBNull.Value)
+                    Else
+                        sqlcmd.Parameters.AddWithValue("@email", email)
+                    End If
+
                     sqlcmd.Parameters.AddWithValue("@regdate", DateTime.Now().ToString())
                     sqlcmd.Parameters.AddWithValue("@platform", platform)
                     If Conn.State <> ConnectionState.Open Then
@@ -57,8 +61,7 @@ Namespace IST
             End If
             Return id
         End Function
-        'we need to take the has as a paramete in update user also. this is a security hole and needs to be fixed soon.
-        'date - 27/06/2012
+        
         Public Shared Function UpdateUser(ByVal id As Integer, ByVal name As String, ByVal email As String, ByVal phoneNo As String) As Boolean
             Dim success As Boolean = True
             Try
